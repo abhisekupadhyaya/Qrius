@@ -1452,7 +1452,7 @@ class _XSMU:
 					self.ivRampSettings.resTrackMode)
 			
 			elif mode == RUN_MODE_IV_TIME_RESOLVED:
-				module = _IVModule (master, self)
+				module = _IVTimeResolvedModule (master, self)
 				module.initAcquisitionSettings (
 					self.acquisitionSettings.delay,
 					self.acquisitionSettings.filterLength)
@@ -2787,30 +2787,6 @@ class _IVModule (_Module):
 			currentStep, voltageStep, bipolar, resTrackMode)
 
 		text = 'IV settings updated'
-		oApplet = self.oXSMU.oApplet
-		oApplet.schedule_task (oApplet.set_status, text)
-
-	def initIVTimeResolvedRampSettings (
-		self, finalCurrent, finalVoltage, maxPower,
-		currentStep, voltageStep, bipolar, resTrackMode):
-
-		self.finalCurrent = finalCurrent
-		self.finalVoltage = finalVoltage
-		self.maxPower     = maxPower
-		self.currentStep  = currentStep
-		self.voltageStep  = voltageStep
-		self.bipolar      = bipolar
-		self.resTrackMode = resTrackMode
-
-	def setIVTimeResolvedRampSettings (
-		self, finalCurrent, finalVoltage, maxPower,
-		currentStep, voltageStep, bipolar, resTrackMode):
-
-		self.initIVTimeResolvedRampSettings (
-			finalCurrent, finalVoltage, maxPower,
-			currentStep, voltageStep, bipolar, resTrackMode)
-
-		text = 'IV Time Resolved settings updated'
 		oApplet = self.oXSMU.oApplet
 		oApplet.schedule_task (oApplet.set_status, text)
 
