@@ -71,6 +71,21 @@ class _Method (_XMethod):
 		}
 
 	# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	
+	def set_IV_TimeResolvedRampSettings (self, finalCurrent, finalVoltage, maxPower,
+							 currentStep, voltageStep, bipolar, resTrackMode):
+
+		self['IV_RampSettings'] = {
+			'finalCurrent' : finalCurrent,
+			'finalVoltage' : finalVoltage,
+			'maxPower'     : maxPower,
+			'currentStep'  : currentStep,
+			'voltageStep'  : voltageStep,
+			'bipolar'      : bipolar,
+			'resTrackMode' : resTrackMode
+		}
+
+	# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	def setOhmmeterSettings (self, maxCurrent, maxVoltage,
 							 maxPower, bipolar, resTrackMode):
@@ -147,6 +162,33 @@ class _Method (_XMethod):
 	# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	def get_IV_RampSettings (self,
+							 finalCurrent = None,
+							 finalVoltage = None,
+							 maxPower     = None,
+							 currentStep  = None,
+							 voltageStep  = None,
+							 bipolar      = None,
+							 resTrackMode = None):
+
+		try:
+			settings = self['IV_RampSettings']
+			finalCurrent = settings.get ('finalCurrent' , finalCurrent)
+			finalVoltage = settings.get ('finalVoltage' , finalVoltage)
+			maxPower     = settings.get ('maxPower'     , maxPower    )
+			currentStep  = settings.get ('currentStep'  , currentStep )
+			voltageStep  = settings.get ('voltageStep'  , voltageStep )
+			bipolar      = settings.get ('bipolar'      , bipolar     )
+			resTrackMode = settings.get ('resTrackMode' , resTrackMode)
+
+		except KeyError : pass
+
+		return (
+			finalCurrent, finalVoltage, maxPower,
+			currentStep, voltageStep, bipolar, resTrackMode)
+
+	# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	
+	def get_IV_TimeResolvedRampSettings (self,
 							 finalCurrent = None,
 							 finalVoltage = None,
 							 maxPower     = None,

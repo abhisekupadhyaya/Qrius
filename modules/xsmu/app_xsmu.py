@@ -15,10 +15,11 @@ import Preferences
 class GUI:
 
 	run_modes = {
-		RUN_MODE_ITime : 'I-Time',
-		RUN_MODE_VTime : 'V-Time',
-		RUN_MODE_IV    : 'I-V',
-		RUN_MODE_RTime : 'R-Time'
+		RUN_MODE_ITime             : 'I-Time',
+		RUN_MODE_VTime             : 'V-Time',
+		RUN_MODE_IV                : 'I-V',
+		RUN_MODE_IV_TIME_RESOLVED  : 'I-V Time Resolved',
+		RUN_MODE_RTime             : 'R-Time'
 	}
 
 	methodFileTypes = [
@@ -111,6 +112,10 @@ class GUI:
 		self.utilmenu.add_command (
 			label   = 'I-V measurement settings',
 			command = self.wIVRampSettingsCB)
+		
+		self.utilmenu.add_command (
+			label   = 'I-V Time Resolved measurement settings',
+			command = self.wIVTimeResolvedRampSettingsCB)
 
 		self.utilmenu.add_command (
 			label   = 'Resistance measurement settings',
@@ -170,6 +175,9 @@ class GUI:
 
 		self.wIVRampSettings = \
 			GUI_IVRampSettingsDisplay (master = Frame (master))
+		
+		self.wIVTimeResolvedRampSettings = \
+			GUI_IVTimeResolvedRampSettingsDisplay (master = Frame (master))
 
 		self.grid_OhmmeterSettings = (row, col)
 
@@ -412,6 +420,9 @@ class GUI:
 
 	def wIVRampSettingsCB (self, *args):
 		self.do_callback (OPEN_DIALOG, IV_RAMP_SETTINGS_DIALOG)
+	
+	def wIVTimeResolvedRampSettingsCB (self, *args):
+		self.do_callback (OPEN_DIALOG, IV_TIME_RESOLVED_RAMP_SETTINGS_DIALOG)
 
 	def wOhmmeterSettingsCB (self, *args):
 		self.do_callback (OPEN_DIALOG, OHMMETER_SETTINGS_DIALOG)
@@ -533,15 +544,18 @@ class GUI:
 
 		self.run_mode.set (self.run_modes.get (run_mode))
 
-		for w in (self.wIVRampSettings, self.wOhmmeterSettings):
+		for w in (self.wIVRampSettings, self.wIVTimeResolvedRampSettings, self.wOhmmeterSettings):
 			w.master.grid_forget()
 
 		options = {
 
-			RUN_MODE_IV    : (
+			RUN_MODE_IV                  : (
+				self.grid_IVRampSettings, self.wIVRampSettings),
+			
+			RUN_MODE_IV_TIME_RESOLVED    : (
 				self.grid_IVRampSettings, self.wIVRampSettings),
 
-			RUN_MODE_RTime : (
+			RUN_MODE_RTime               : (
 				self.grid_OhmmeterSettings, self.wOhmmeterSettings)
 		}
 
@@ -743,6 +757,14 @@ class GUI:
 		currentStep, voltageStep, bipolar, resTrackMode):
 
 		self.wIVRampSettings.set (
+			finalCurrent, finalVoltage, maxPower,
+			currentStep, voltageStep, bipolar, resTrackMode)
+	
+	def setIVTimeResolvedRampSettings (
+		self, finalCurrent, finalVoltage, maxPower,
+		currentStep, voltageStep, bipolar, resTrackMode):
+
+		self.wIVTimeResolvedRampSettings.set (
 			finalCurrent, finalVoltage, maxPower,
 			currentStep, voltageStep, bipolar, resTrackMode)
 
@@ -1802,6 +1824,495 @@ class GUI_IVRampSettings:
 	# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 class GUI_IVRampSettingsDisplay:
+
+	bipolarMenuItems = {
+		True  : 'Yes',
+		False : 'No'
+	}
+
+	resTrackMenuItems = {
+		R_TRACK_V_I   : u'V/I',
+		R_TRACK_dV_dI : u'ΔV/ΔI'
+	}
+
+	instances = []
+
+	def __init__ (self, master):
+		self.master = master
+		self.createWidgets (master)
+		self.synchronize()
+
+	def close (self):
+		self.instances.remove (self)
+
+	def createWidgets (self, master):
+
+		master.grid_columnconfigure (0, weight = 1)
+
+		# +++++++++++++++++++++++++++++++
+
+		row = 0; col = 0
+		w = LabelFrame (master, text = 'Limits')
+		w.grid (row = row, column = col,
+				sticky = NSEW, padx = 5, pady = 5)
+
+		self.populateLimits (w)
+
+		# +++++++++++++++++++++++++++++++
+
+		row += 1
+		w = LabelFrame (master, text = 'Step size')
+		w.grid (row = row, column = col,
+				sticky = NSEW, padx = 5, pady = 5)
+
+		self.populateStepSize (w)
+
+		# +++++++++++++++++++++++++++++++
+
+		row += 1
+		w = LabelFrame (master, text = 'Options')
+		w.grid (row = row, column = col,
+				sticky = NSEW, padx = 5, pady = 5)
+
+		self.populateOptions (w)
+
+		# +++++++++++++++++++++++++++++++
+
+	def populateLimits (self, master):
+		master.grid_columnconfigure (0, weight = 1, minsize = 20)
+		master.grid_columnconfigure (1, weight = 1, minsize = 10)
+
+		# +++++++++++++++++++++++++++++++
+
+		row = 0; col = 0
+		w = Label (master, text = 'Current (μA)', anchor = W)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		w = self.wFinalCurrent = Label (master, anchor = E)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+		row += 1; col = 0
+		w = Label (master, text = 'Voltage (mV)', anchor = W)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		w = self.wFinalVoltage = Label (master, anchor = E)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+		row += 1; col = 0
+		w = Label (master, text = 'Power (mW)', anchor = W)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		w = self.wMaxPower = Label (master, anchor = E)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+		row += 1; col = 0
+		w = Label (master, text = 'Whichever happens first', anchor = E)
+		w.grid (row = row, column = col, columnspan = 2, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+	def populateStepSize (self, master):
+		master.grid_columnconfigure (0, weight = 1)
+		master.grid_columnconfigure (1, weight = 1)
+
+		col_widths = [20, 10]
+
+		# +++++++++++++++++++++++++++++++
+
+		row = 0; col = 0
+		w = Label (master, text = 'Current (μA)', anchor = W)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		w = self.wCurrentStep = Label (master, anchor = E)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+		row += 1; col = 0
+		w = Label (master, text = 'Voltage (mV)', anchor = W)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		w = self.wVoltageStep = Label (master, anchor = E)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+	def populateOptions (self, master):
+
+		master.grid_columnconfigure (0, weight = 1, minsize = 200)
+		master.grid_columnconfigure (1, weight = 1, minsize = 100)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+		row = 0; col = 0
+		w = Label (master, text = 'Bipolar', anchor = W)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		w = self.wBipolar = Label (master, anchor = E)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+		# row += 1; col = 0
+		w = Label (master, text = 'R track mode', anchor = W)
+		# w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		# col += 1
+		w = self.wResTrackMode = Label (master, anchor = E)
+		# w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+	def synchronize (self):
+
+		if len (self.instances) == 0:
+			self._blank_parameters()
+
+		else:
+			first = self.instances[0]
+			self.wFinalCurrent ['text'] = first.wFinalCurrent ['text']
+			self.wFinalVoltage ['text'] = first.wFinalVoltage ['text']
+			self.wMaxPower     ['text'] = first.wMaxPower     ['text']
+			self.wCurrentStep  ['text'] = first.wCurrentStep  ['text']
+			self.wVoltageStep  ['text'] = first.wVoltageStep  ['text']
+			self.wBipolar      ['text'] = first.wBipolar      ['text']
+			self.wResTrackMode ['text'] = first.wResTrackMode ['text']
+
+		self.instances.append (self)
+
+	# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	def _set (self, finalCurrent, finalVoltage, maxPower,
+		  currentStep, voltageStep, bipolar, resTrackMode):
+
+		self.wFinalCurrent ['text'] = str (A_to_uA * finalCurrent)
+		self.wFinalVoltage ['text'] = str (V_to_mV * finalVoltage)
+		self.wMaxPower     ['text'] = str (W_to_mW * maxPower)
+		self.wCurrentStep  ['text'] = str (A_to_uA * currentStep)
+		self.wVoltageStep  ['text'] = str (V_to_mV * voltageStep)
+		self.wBipolar      ['text'] = self.bipolarMenuItems.get (bipolar)
+		self.wResTrackMode ['text'] = self.resTrackMenuItems.get (resTrackMode)
+
+	def set (self, finalCurrent, finalVoltage, maxPower,
+		  currentStep, voltageStep, bipolar, resTrackMode):
+
+		for instance in self.instances:
+			instance._set (finalCurrent, finalVoltage, maxPower,
+				  currentStep, voltageStep, bipolar, resTrackMode)
+
+	# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	def _blank_parameters (self):
+		self.wFinalCurrent ['text'] = '...'
+		self.wFinalVoltage ['text'] = '...'
+		self.wMaxPower     ['text'] = '...'
+		self.wCurrentStep  ['text'] = '...'
+		self.wVoltageStep  ['text'] = '...'
+		self.wBipolar      ['text'] = '...'
+		self.wResTrackMode ['text'] = '...'
+
+	def blank_parameters (self):
+		for instance in self.instances:
+			instance._blank_parameters()
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+class GUI_IVTimeResolvedRampSettings:
+
+	bipolarMenuItems = {
+		True  : 'Yes',
+		False : 'No'
+	}
+
+	resTrackMenuItems = {
+		R_TRACK_V_I   : u'V/I',
+		R_TRACK_dV_dI : u'ΔV/ΔI'
+	}
+
+	def __init__ (
+		self, master, finalCurrent, finalVoltage, maxPower,
+		currentStep, voltageStep, bipolar, resTrackMode):
+
+		self.master = master
+		self.master.title ('I-V Time Resolved ramp settings')
+		self.createWidgets (master)
+		self.set (finalCurrent, finalVoltage, maxPower,
+			currentStep, voltageStep, bipolar, resTrackMode)
+
+	def callback (self, cb):
+		self._callback = cb
+
+	def do_callback (self, context, *args):
+		if hasattr (self, '_callback'):
+			self._callback (context, *args)
+
+	def createWidgets (self, master):
+
+		self.mainmenu = Menu (self.master)
+		self.mainmenu.config (borderwidth = 1)
+		self.master.config (menu = self.mainmenu)
+
+		self.filemenu = Menu (self.mainmenu)
+		self.filemenu.config (tearoff = 0)
+		self.mainmenu.add_cascade (
+			label = 'File', menu = self.filemenu, underline = 0)
+
+		self.filemenu.add_command (label = 'Done', command = self.wApplyCB)
+		self.filemenu.add_command (label = 'Cancel', command = self.wCancelCB)
+
+		# +++++++++++++++++++++++++++++++
+
+		master.grid_columnconfigure (0, weight = 1)
+
+		# +++++++++++++++++++++++++++++++
+
+		row = 0; col = 0
+		w = LabelFrame (master, text = 'Limits')
+		w.grid (row = row, column = col,
+				sticky = NSEW, padx = 5, pady = 5)
+
+		self.populateLimits (w)
+
+		# +++++++++++++++++++++++++++++++
+
+		row += 1
+		w = LabelFrame (master, text = 'Step size')
+		w.grid (row = row, column = col,
+				sticky = NSEW, padx = 5, pady = 5)
+
+		self.populateStepSize (w)
+
+		# +++++++++++++++++++++++++++++++
+
+		row += 1
+		w = LabelFrame (master, text = 'Options')
+		w.grid (row = row, column = col,
+				sticky = NSEW, padx = 5, pady = 5)
+
+		self.populateOptions (w)
+
+		# +++++++++++++++++++++++++++++++
+
+	def populateLimits (self, master):
+		master.grid_columnconfigure (0, weight = 1)
+		master.grid_columnconfigure (1, weight = 1)
+
+		col_widths = [20, 10]
+
+		# +++++++++++++++++++++++++++++++
+
+		row = 0; col = 0
+		w = Label (master, text = 'Current (μA)',
+					width = col_widths[col], anchor = W)
+
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		w = self.wFinalCurrent = \
+				XFloatEntry (master, width = col_widths[col])
+
+		w.enable_color (False)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+		row += 1; col = 0
+		w = Label (master, text = 'Voltage (mV)',
+					width = col_widths[col], anchor = W)
+
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		w = self.wFinalVoltage = \
+				XFloatEntry (master, width = col_widths[col])
+
+		w.enable_color (False)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+		row += 1; col = 0
+		w = Label (master, text = 'Power (mW)',
+					width = col_widths[col], anchor = W)
+
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		w = self.wMaxPower = \
+				XFloatEntry (master, width = col_widths[col])
+
+		w.enable_color (False)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+		row += 1; col = 0
+		w = Label (master, text = 'Whichever happens first',
+					width = col_widths[col], anchor = E)
+
+		w.grid (row = row, column = col, columnspan = 2, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+	def populateStepSize (self, master):
+		master.grid_columnconfigure (0, weight = 1)
+		master.grid_columnconfigure (1, weight = 1)
+
+		col_widths = [20, 10]
+
+		# +++++++++++++++++++++++++++++++
+
+		row = 0; col = 0
+		w = Label (master, text = 'Current (μA)',
+					width = col_widths[col], anchor = W)
+
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		w = self.wCurrentStep = \
+				XFloatEntry (master, width = col_widths[col])
+
+		w.enable_color (False)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+		row += 1; col = 0
+		w = Label (master, text = 'Voltage (mV)',
+					width = col_widths[col], anchor = W)
+
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		w = self.wVoltageStep = \
+				XFloatEntry (master, width = col_widths[col])
+
+		w.enable_color (False)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+	def populateOptions (self, master):
+		master.grid_columnconfigure (0, weight = 1, minsize = 20)
+		master.grid_columnconfigure (1, weight = 1, minsize = 10)
+
+		# +++++++++++++++++++++++++++++++
+
+		row = 0; col = 0
+		w = Label (master, text = 'Bipolar', anchor = W)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		col += 1
+		var = self.bipolar = StringVar()
+		options = self.bipolarMenuItems.values()
+		w = self.wBipolarOptions = OptionMenu (master, var, *options)
+		w.config (anchor = W)
+		w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+		#row += 1; col = 0
+		w = Label (master, text = 'Tracking mode', anchor = W)
+		#w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+
+		#col += 1
+		options = self.resTrackMenuItems.values()
+		var = self.resTrackMode = StringVar()
+		w = self.wResTrackOptions = OptionMenu (master, var, *options)
+		w.config (anchor = W)
+		#w.grid (row = row, column = col, sticky = NSEW)
+
+		# +++++++++++++++++++++++++++++++
+		# +++++++++++++++++++++++++++++++
+
+	def wApplyCB (self):
+
+		bipolarModes  = {v : k for (k, v) in self.bipolarMenuItems.items()}
+		resTrackModes = {v : k for (k, v) in self.resTrackMenuItems.items()}
+
+		self.do_callback (APPLY,
+			uA_to_A * self.wFinalCurrent.get(),
+			mV_to_V * self.wFinalVoltage.get(),
+			mW_to_W * self.wMaxPower.get(),
+			uA_to_A * self.wCurrentStep.get(),
+			mV_to_V * self.wVoltageStep.get(),
+			bipolarModes.get (self.bipolar.get()),
+			resTrackModes.get (self.resTrackMode.get()))
+
+	def wCancelCB (self):
+		self.do_callback (CANCEL)
+
+	# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	def set (self, finalCurrent, finalVoltage, maxPower,
+		  currentStep, voltageStep, bipolar, resTrackMode):
+
+		self.wFinalCurrent.set (A_to_uA * finalCurrent)
+		self.wFinalVoltage.set (V_to_mV * finalVoltage)
+		self.wMaxPower.set     (W_to_mW * maxPower)
+		self.wCurrentStep.set  (A_to_uA * currentStep)
+		self.wVoltageStep.set  (V_to_mV * voltageStep)
+		self.bipolar.set       (self.bipolarMenuItems.get (bipolar))
+		self.resTrackMode.set  (self.resTrackMenuItems.get (resTrackMode))
+
+	# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+class GUI_IVTimeResolvedRampSettingsDisplay:
 
 	bipolarMenuItems = {
 		True  : 'Yes',

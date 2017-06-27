@@ -6,6 +6,7 @@ from app_xsmu       import GUI_SourceParameters
 from app_xsmu       import GUI_MeterParameters
 from app_xsmu       import GUI_AcquisitionSettings
 from app_xsmu       import GUI_IVRampSettings
+from app_xsmu       import GUI_IVTimeResolvedRampSettings
 from app_xsmu       import GUI_OhmmeterSettings
 
 from XSMU_DataType  import DataPoint, DataSet
@@ -678,6 +679,18 @@ class _Applet:
 		self.oXSMU.ivRampSettings.set (
 			finalCurrent, finalVoltage, maxPower,
 			currentStep, voltageStep, bipolar, resTrackMode)
+	
+	def setIVTimeResolvedRampSettings (
+		self, finalCurrent, finalVoltage, maxPower,
+		currentStep, voltageStep, bipolar, resTrackMode):
+
+		self.oXSMU.oApp.setIVTimeResolvedRampSettings (
+			finalCurrent, finalVoltage, maxPower,
+			currentStep, voltageStep, bipolar, resTrackMode)
+
+		self.oXSMU.ivTimeResolvedRampSettings.set (
+			finalCurrent, finalVoltage, maxPower,
+			currentStep, voltageStep, bipolar, resTrackMode)
 
 	# +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -1091,6 +1104,35 @@ class IVRampSettings:
 			self.bipolar,
 			self.resTrackMode)
 
+class IVTimeResolvedRampSettings:
+
+	def __init__ (self, finalCurrent, finalVoltage, maxPower,
+			   currentStep, voltageStep, bipolar, resTrackMode):
+
+		self.set (finalCurrent, finalVoltage, maxPower,
+			currentStep, voltageStep, bipolar, resTrackMode)
+
+	def set (self, finalCurrent, finalVoltage, maxPower,
+		  currentStep, voltageStep, bipolar, resTrackMode):
+
+		self.finalCurrent = finalCurrent
+		self.finalVoltage = finalVoltage
+		self.maxPower     = maxPower
+		self.currentStep  = currentStep
+		self.voltageStep  = voltageStep
+		self.bipolar      = bipolar
+		self.resTrackMode = resTrackMode
+
+	def get (self):
+		return (
+			self.finalCurrent,
+			self.finalVoltage,
+			self.maxPower,
+			self.currentStep,
+			self.voltageStep,
+			self.bipolar,
+			self.resTrackMode)
+
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 class OhmmeterSettings:
@@ -1159,6 +1201,15 @@ class _XSMU:
 			voltageStep  = 1.0,
 			bipolar      = True,
 			resTrackMode = R_TRACK_dV_dI)
+		
+		self.ivTimeResolvedRampSettings = IVTimeResolvedRampSettings (
+			finalCurrent = 10e-3,
+			finalVoltage = 10.0,
+			maxPower     = 100e-3,
+			currentStep  = 1e-3,
+			voltageStep  = 1.0,
+			bipolar      = True,
+			resTrackMode = R_TRACK_dV_dI)
 
 		self.ohmmeterSettings = OhmmeterSettings (
 			maxCurrent   = 10e-3,
@@ -1203,6 +1254,16 @@ class _XSMU:
 			self.ivRampSettings.voltageStep,
 			self.ivRampSettings.bipolar,
 			self.ivRampSettings.resTrackMode)
+		
+		oApplet.schedule_task (
+			oApplet.setIVTimeResolvedRampSettings,
+			self.ivTimeResolvedRampSettings.finalCurrent,
+			self.ivTimeResolvedRampSettings.finalVoltage,
+			self.ivTimeResolvedRampSettings.maxPower,
+			self.ivTimeResolvedRampSettings.currentStep,
+			self.ivTimeResolvedRampSettings.voltageStep,
+			self.ivTimeResolvedRampSettings.bipolar,
+			self.ivTimeResolvedRampSettings.resTrackMode)
 
 		oApplet.schedule_task (
 			oApplet.setOhmmeterSettings,
@@ -1389,6 +1450,21 @@ class _XSMU:
 					self.ivRampSettings.voltageStep,
 					self.ivRampSettings.bipolar,
 					self.ivRampSettings.resTrackMode)
+			
+			elif mode == RUN_MODE_IV_TIME_RESOLVED:
+				module = _IVModule (master, self)
+				module.initAcquisitionSettings (
+					self.acquisitionSettings.delay,
+					self.acquisitionSettings.filterLength)
+
+				module.initIVTimeResolvedRampSettings (
+					self.ivTimeResolvedRampSettings.finalCurrent,
+					self.ivTimeResolvedRampSettings.finalVoltage,
+					self.ivTimeResolvedRampSettings.maxPower,
+					self.ivTimeResolvedRampSettings.currentStep,
+					self.ivTimeResolvedRampSettings.voltageStep,
+					self.ivTimeResolvedRampSettings.bipolar,
+					self.ivTimeResolvedRampSettings.resTrackMode)
 
 			elif mode == RUN_MODE_RTime:
 				module = _RTimeModule (master, self)
@@ -1440,6 +1516,9 @@ class _XSMU:
 
 				elif mode == RUN_MODE_IV:
 					thread = _IVAcquisitionThread (module)
+				
+				elif mode == RUN_MODE_IV_TIME_RESOLVED:
+					thread = _IVTimeResolvedAcquisitionThread (module)
 
 				elif mode == RUN_MODE_RTime:
 					thread = _RTimeAcquisitionThread (module)
@@ -1485,6 +1564,9 @@ class _XSMU:
 
 		elif dialog == IV_RAMP_SETTINGS_DIALOG:
 			self.openIVRampDialog()
+		
+		elif dialog == IV_TIME_RESOLVED_RAMP_SETTINGS_DIALOG:
+			self.openIVTimeResolvedRampDialog()
 
 		elif dialog == OHMMETER_SETTINGS_DIALOG:
 			self.openOhmmeterDialog()
@@ -1651,6 +1733,28 @@ class _XSMU:
 		w.master.grab_set()
 		w.master.wm_attributes("-topmost", 1)
 		w.master.transient (parent)
+	
+	def openIVTimeResolvedRampDialog (self):
+
+		w = self.dialog = GUI_IVTimeResolvedRampSettings (
+			Toplevel (takefocus = True),
+			self.ivTimeResolvedRampSettings.finalCurrent,
+			self.ivTimeResolvedRampSettings.finalVoltage,
+			self.ivTimeResolvedRampSettings.maxPower,
+			self.ivTimeResolvedRampSettings.currentStep,
+			self.ivTimeResolvedRampSettings.voltageStep,
+			self.ivTimeResolvedRampSettings.bipolar,
+			self.ivTimeResolvedRampSettings.resTrackMode)
+
+		w.callback (self.ivTimeResolvedRampDialogCB)
+
+		# Makes it modal
+		parent = self.oApp.master.focus_displayof().winfo_toplevel()
+		parent.lift()
+		w.master.focus_set()
+		w.master.grab_set()
+		w.master.wm_attributes("-topmost", 1)
+		w.master.transient (parent)
 
 	def ivRampDialogCB (self, context, *args):
 
@@ -1663,6 +1767,27 @@ class _XSMU:
 
 			if oModule and isinstance (oModule, _IVModule):
 				oModule.schedule_task (oModule.setIVRampSettings, *args)
+
+			self.dialog.master.destroy()
+			self.dialog = None
+
+		elif context == CANCEL:
+			self.dialog.master.destroy()
+			self.dialog = None
+
+		else: raise ValueError (context)
+	
+	def ivTimeResolvedRampDialogCB (self, context, *args):
+
+		oApplet    = self.oApplet
+		oModule    = self.oModule
+
+		if context == APPLY:
+
+			oApplet.schedule_task (oApplet.setIVTimeResolvedRampSettings, *args)
+
+			if oModule and isinstance (oModule, _IVModule):
+				oModule.schedule_task (oModule.setIVTimeResolvedRampSettings, *args)
 
 			self.dialog.master.destroy()
 			self.dialog = None
@@ -2058,11 +2183,12 @@ class _XSMU:
 
 	def getMethod (self):
 		method = Method()
-		method.setSourceParameters    (*self.sourceParameters.get())
-		method.setMeterParameters     (*self.meterParameters.get())
-		method.setAcquisitionSettings (*self.acquisitionSettings.get())
-		method.set_IV_RampSettings    (*self.ivRampSettings.get())
-		method.setOhmmeterSettings    (*self.ohmmeterSettings.get())
+		method.setSourceParameters             (*self.sourceParameters.get())
+		method.setMeterParameters              (*self.meterParameters.get())
+		method.setAcquisitionSettings          (*self.acquisitionSettings.get())
+		method.set_IV_RampSettings             (*self.ivRampSettings.get())
+		method.set_IV_TimeResolvedRampSettings (*self.ivTimeResolvedRampSettings.get())
+		method.setOhmmeterSettings             (*self.ohmmeterSettings.get())
 		return method
 
 	def applyMethod (self, method):
@@ -2116,6 +2242,16 @@ class _XSMU:
 		if oModule and isinstance (oModule, _IVModule):
 			oModule.schedule_task (
 				oModule.setIVRampSettings, *settings)
+
+		# ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		
+		settings = method.get_IV_TimeResolvedRampSettings (*self.ivRampSettings.get())
+
+		oApplet.schedule_task (oApplet.setIVTimeResolvedRampSettings, *settings)
+
+		if oModule and isinstance (oModule, _IVModule):
+			oModule.schedule_task (
+				oModule.setIVTimeResolvedRampSettings, *settings)
 
 		# ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -2704,6 +2840,7 @@ class _IVModule (_Module):
 			if not self.complete():
 
 				self.sleep (self.delay, self.do_tasks, bg_task, *bg_tasks)
+				
 				datapoint = self.acquire (self.do_tasks, bg_task, *bg_tasks)
 
 				self.update_log (datapoint)
@@ -2900,6 +3037,332 @@ class _IVModule (_Module):
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 class _IVAcquisitionThread (_AcquisitionThread):
+
+	def __init__ (self, module):
+		_AcquisitionThread.__init__ (self, module)
+
+	def thread (self):
+
+		try:
+			self.module.init()
+
+			while True:
+				self.do_tasks()
+				self.module.excite_n_plot (self.do_tasks)
+				if self.module.complete(): break
+
+		except (CommError, LinkError) : pass
+		except (IOError, OSError)     : pass
+		except XTerminate             : pass
+
+		self.module.atexit()
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+class _IVTimeResolvedModule (_Module):
+
+	def __init__ (self, master, oXSMU):
+		_Module.__init__ (self, master, oXSMU)
+		self.excitationVoltage = None
+		self.excitationCurrent = None
+		self.scan_mode         = None
+		self.power_limited     = False
+		self._complete         = False
+
+	def run_type (self):
+		return 'IV-Time-Resolved'
+
+	def xlabel (self):
+		return 'Voltage (V)'
+
+	def ylabel (self):
+		return 'Current (A)'
+
+	def init (self):
+		_Module.init (self)
+
+		oXSMU   = self.oXSMU
+		oApplet = oXSMU.oApplet
+		oApplet.schedule_task (oApplet.setRunMode, RUN_MODE_IV_TIME_RESOLVED)
+
+		self.excitationVoltage = None
+		self.excitationCurrent = None
+		self.scan_mode         = None
+		self.power_limited     = False
+		self._complete         = False
+
+	def initIVTimeResolvedRampSettings (
+		self, finalCurrent, finalVoltage, maxPower,
+		currentStep, voltageStep, bipolar, resTrackMode):
+
+		self.finalCurrent = finalCurrent
+		self.finalVoltage = finalVoltage
+		self.maxPower     = maxPower
+		self.currentStep  = currentStep
+		self.voltageStep  = voltageStep
+		self.bipolar      = bipolar
+		self.resTrackMode = resTrackMode
+
+	def setIVTimeResolvedRampSettings (
+		self, finalCurrent, finalVoltage, maxPower,
+		currentStep, voltageStep, bipolar, resTrackMode):
+
+		self.initIVTimeResolvedRampSettings (
+			finalCurrent, finalVoltage, maxPower,
+			currentStep, voltageStep, bipolar, resTrackMode)
+
+		text = 'IV Time Resolved settings updated'
+		oApplet = self.oXSMU.oApplet
+		oApplet.schedule_task (oApplet.set_status, text)
+
+	def acquire (self, bg_task = None, *bg_tasks):
+
+		oXSMU = self.oXSMU
+		t = systime() - self.t0
+		self.do_tasks (bg_task, *bg_tasks)
+
+		try:
+			oXSMU.acquire_lock()
+			(current, voltage, vsrc) = oXSMU.measureIVV2 (self.filterLength)
+
+		finally:
+			oXSMU.release_lock()
+
+		return DataPoint (
+			time    = t,
+			current = current,
+			voltage = voltage,
+			vsrc    = vsrc)
+
+	def breakPlot (self):
+
+		oApplet = self.oXSMU.oApplet
+
+		blank_datapoint = DataPoint (
+			time    = None,
+			current = None,
+			voltage = None,
+			vsrc    = None)
+
+		self.dataset.append (blank_datapoint)
+
+		oApplet.schedule_task (
+			oApplet.updatePlot, self,
+			blank_datapoint.voltage, blank_datapoint.current)
+
+		return blank_datapoint
+
+	def excite_n_plot (self, bg_task = None, *bg_tasks):
+
+		oApplet = self.oXSMU.oApplet
+		self.do_tasks (bg_task, *bg_tasks)
+
+		try:
+
+			breakPlot = self.applyNextExcitation()
+			if breakPlot: self.breakPlot()
+
+			if not self.complete():
+
+				self.sleep (self.delay, self.do_tasks, bg_task, *bg_tasks)
+				datapoint = self.acquire (self.do_tasks, bg_task, *bg_tasks)
+
+				self.update_log (datapoint)
+				self.dataset.append (datapoint)
+
+				oApplet.schedule_task (
+					oApplet.updatePlot, self,
+					datapoint.voltage, datapoint.current)
+					
+
+			else:
+				datapoint = None
+
+		except (CommError, LinkError) as e:
+			oApplet.schedule_task (oApplet.set_status, str (e))
+			raise
+
+		except (IOError, OSError) as e:
+			text = e.strerror + ' on ' + e.filename
+			oApplet.schedule_task (oApplet.set_status, text)
+			raise
+
+		return datapoint, breakPlot
+
+	def applyNextExcitation (self):
+
+		oXSMU = self.oXSMU
+
+		'''
+			Find excitation
+		'''
+
+		breakPlot = NO_BREAKPLOT
+
+		if self.scan_mode == None:
+			self.scan_mode = SCAN_MODE_POSITIVE
+
+		if self.scan_mode == SCAN_MODE_POSITIVE:
+			breakPlot = self.findNextPositiveExcitation (breakPlot)
+
+		if self.scan_mode == SCAN_MODE_NEGATIVE:
+			breakPlot = self.findNextNegativeExcitation (breakPlot)
+
+		if not self.complete():
+
+			try:
+				oXSMU.acquire_lock()
+
+				current = (
+					self.excitationCurrent if self.currentStep != 0.0
+					else copysign (self.finalCurrent, self.excitationVoltage))
+
+				voltage = (
+					self.excitationVoltage if self.voltageStep != 0.0
+					else copysign (self.finalVoltage, self.excitationCurrent))
+
+				if current == 0.0 or voltage == 0.0:
+					oXSMU.output_off()
+
+				else:
+					oXSMU.setExcitationLimits (current, voltage, self.maxPower)
+
+					(src_mode, value, self.power_limited) = (
+						oXSMU.doExcitationAutoTune (
+							track_mode = self.resTrackMode))
+
+			finally:
+				oXSMU.release_lock()
+
+		return breakPlot
+
+	def findNextPositiveExcitation (self, breakPlot):
+
+		oXSMU = self.oXSMU
+
+		if (self.excitationCurrent == None
+		or  self.excitationVoltage == None):
+
+			self.excitationCurrent = 0.0
+			self.excitationVoltage = 0.0
+			self.power_limited     = False
+
+		elif (not self.power_limited
+		and abs (self.excitationCurrent) < self.finalCurrent
+		and abs (self.excitationVoltage) < self.finalVoltage):
+
+				# Estimating next current
+
+				if oXSMU.sourceParameters.mode == SOURCE_MODE_CS:
+					nextCurrent = (
+						oXSMU.sourceParameters.value() + self.currentStep)
+
+				else:
+					nextCurrent = (
+						self.dataset[-1].current + self.currentStep)
+
+				try:
+					self.excitationCurrent = self.currentStep * round (
+						nextCurrent / self.currentStep)
+
+				except ZeroDivisionError:
+					self.excitationCurrent = nextCurrent
+
+				# Estimating next voltage
+
+				if oXSMU.sourceParameters.mode == SOURCE_MODE_VS:
+					nextVoltage = (
+						oXSMU.sourceParameters.value() + self.voltageStep)
+
+				else:
+					nextVoltage = (
+						self.dataset[-1].vsrc + self.voltageStep)
+
+				try:
+					self.excitationVoltage = self.voltageStep * round (
+						nextVoltage / self.voltageStep)
+
+				except ZeroDivisionError:
+					self.excitationVoltage = nextVoltage
+
+		else:
+			self.excitationCurrent = None
+			self.excitationVoltage = None
+
+			if self.bipolar:
+				breakPlot      = DO_BREAKPLOT
+				self.scan_mode = SCAN_MODE_NEGATIVE
+
+			else:
+				self.scan_mode = None
+				self._complete = True
+
+		return breakPlot
+
+	def findNextNegativeExcitation (self, breakPlot):
+
+		oXSMU = self.oXSMU
+
+		if (self.excitationCurrent == None
+		or  self.excitationVoltage == None):
+
+			self.excitationCurrent = 0.0
+			self.excitationVoltage = 0.0
+			self.power_limited     = False
+
+		elif (not self.power_limited
+		and abs (self.excitationCurrent) < self.finalCurrent
+		and abs (self.excitationVoltage) < self.finalVoltage):
+
+				# Estimating next current
+
+				if oXSMU.sourceParameters.mode == SOURCE_MODE_CS:
+					nextCurrent = (
+						oXSMU.sourceParameters.value() - self.currentStep)
+
+				else:
+					nextCurrent = (
+						self.dataset[-1].current - self.currentStep)
+
+				try:
+					self.excitationCurrent = self.currentStep * round (
+						nextCurrent / self.currentStep)
+
+				except ZeroDivisionError:
+					self.excitationCurrent = nextCurrent
+
+				# Estimating next voltage
+
+				if oXSMU.sourceParameters.mode == SOURCE_MODE_VS:
+					nextVoltage = (
+						oXSMU.sourceParameters.value() - self.voltageStep)
+
+				else:
+					nextVoltage = (
+						self.dataset[-1].vsrc - self.voltageStep)
+
+				try:
+					self.excitationVoltage = self.voltageStep * round (
+						nextVoltage / self.voltageStep)
+
+				except ZeroDivisionError:
+					self.excitationVoltage = nextVoltage
+
+		else:
+			self.scan_mode = None
+			self.excitationCurrent = None
+			self.excitationVoltage = None
+			self._complete = True
+
+		return breakPlot
+
+	def complete (self):
+		return True if self._complete else False
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+class _IVTimeResolvedAcquisitionThread (_AcquisitionThread):
 
 	def __init__ (self, module):
 		_AcquisitionThread.__init__ (self, module)

@@ -17,6 +17,7 @@ RUN_MODE_ITime              = C = C + 1
 RUN_MODE_VTime              = C = C + 1
 RUN_MODE_IV                 = C = C + 1
 RUN_MODE_RTime              = C = C + 1
+RUN_MODE_IV_TIME_RESOLVED   = C = C + 1
 
 START_RUN                   = C = C + 1
 FINISH_RUN                  = C = C + 1
@@ -31,6 +32,7 @@ SOURCE_PARAMETERS_DIALOG    = C = C + 1
 METER_SETTINGS_DIALOG       = C = C + 1
 ACQUISITION_SETTINGS_DIALOG = C = C + 1
 IV_RAMP_SETTINGS_DIALOG     = C = C + 1
+IV_TIME_RESOLVED_RAMP_SETTINGS_DIALOG = C = C + 1
 OHMMETER_SETTINGS_DIALOG    = C = C + 1
 
 APPLY                       = C = C + 1
