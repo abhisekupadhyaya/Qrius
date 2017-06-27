@@ -2790,6 +2790,30 @@ class _IVModule (_Module):
 		oApplet = self.oXSMU.oApplet
 		oApplet.schedule_task (oApplet.set_status, text)
 
+	def initIVTimeResolvedRampSettings (
+		self, finalCurrent, finalVoltage, maxPower,
+		currentStep, voltageStep, bipolar, resTrackMode):
+
+		self.finalCurrent = finalCurrent
+		self.finalVoltage = finalVoltage
+		self.maxPower     = maxPower
+		self.currentStep  = currentStep
+		self.voltageStep  = voltageStep
+		self.bipolar      = bipolar
+		self.resTrackMode = resTrackMode
+
+	def setIVTimeResolvedRampSettings (
+		self, finalCurrent, finalVoltage, maxPower,
+		currentStep, voltageStep, bipolar, resTrackMode):
+
+		self.initIVTimeResolvedRampSettings (
+			finalCurrent, finalVoltage, maxPower,
+			currentStep, voltageStep, bipolar, resTrackMode)
+
+		text = 'IV Time Resolved settings updated'
+		oApplet = self.oXSMU.oApplet
+		oApplet.schedule_task (oApplet.set_status, text)
+
 	def acquire (self, bg_task = None, *bg_tasks):
 
 		oXSMU = self.oXSMU
@@ -3190,9 +3214,9 @@ class _IVTimeResolvedModule (_Module):
 
 		return datapoint, breakPlot
 
-    def applySameExcitation (self):
+    	def applySameExcitation (self):
         
-    	oXSMU = self.oXSMU
+    		oXSMU = self.oXSMU
 
 		'''
 			Find excitation
@@ -3237,9 +3261,9 @@ class _IVTimeResolvedModule (_Module):
 
 		return breakPlot
 		
-    def keepSameExcitation (self, breakPlot):
+    	def keepSameExcitation (self, breakPlot):
     
-        return breakPlot
+        	return breakPlot
         
 	def applyNextExcitation (self):
 
