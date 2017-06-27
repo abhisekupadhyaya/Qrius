@@ -1,0 +1,26 @@
+R vs (H, T) modes:
+
+** All temperature related measurements to be done under stepped ramp
+
+** R-H as a function of T
+
+	>> Stabilize T
+
+	>> Bring sample in magnetic steady state
+		-- Parameters: H_max, H_rate, cycles
+
+	>> Record R vs H
+
+** R-T as under constant H
+
+	Scan over temperature
+
+		>> Stabilize T
+
+		>> Bring sample in magnetic steady state
+			-- Parameters: H_max, H_rate, cycles
+
+		>> Apply H
+			-- Parameters: H_rate
+
+		>> Record R

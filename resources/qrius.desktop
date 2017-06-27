@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Qrius
+Comment=Physical Quantities Measurement System
+Exec=qrius
+Icon=qrius
+Terminal=true
+Type=Application
+Encoding=UTF-8
+Categories=Scientific;Application;

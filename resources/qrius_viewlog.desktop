@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Qrius log
+Comment=Physical Quantities Measurement System
+Exec=qrius_viewlog
+Icon=qrius_viewlog
+Terminal=false
+Type=Application
+Encoding=UTF-8
+Categories=Scientific;Application;

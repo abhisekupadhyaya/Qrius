@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Qrius system configuration
+Comment=Physical Quantities Measurement System
+Exec=sudo -H qrius
+Icon=qrius_system_config
+Terminal=true
+Type=Application
+Encoding=UTF-8
+Categories=Scientific;Application;

@@ -1,0 +1,1676 @@
+### 2.3.1
+
+2017-01-12  Krishnendu Chatterjee  <krishnendu.chatterjee@gmail.com>
+
+* module/Cryostat: "R-T insert with a heater" deleted from cryostat insert menu.
+
+* module/Cryostat, ppsel/res: "Insert with a heater and a sample puck" is added in the list of inserts in cryostat module. This is the default insert type when "linear" or "stepped ramp under magnetic field" is selected from resistivity module.
+
+2016-10-22  Krishnendu Chatterjee  <krishnendu.chatterjee@gmail.com>
+
+* lib/Plot2D: Log X, log y, and grid control button have been added to the Plot2D widget. The icons of these buttons are located in lib folder along with the Plot2D class definition file.
+
+### 2.3.0
+
+2016-10-01  Krishnendu Chatterjee  <krishnendu.chatterjee@gmail.com>
+
+* res.py (acquire_RH): Sweeping of H is divided into 4 phases. The end of each phase is checked against H >= or <= of its terminal value. This allows the loop to come out, even if both H_max and H_step values are set to zero.
+
+2016-09-07 Gitansh Kataria <gitansh95@gmail.com>
+
+* mgps: Range names changed to generic RANGE_1
+
+* MGPS_Constants: Range names changed to generic RANGE_1
+
+* app_mgps: Range names changed to generic RANGE_1, and Display now shows 6A range instead of 2A
+
+2016-09-06  Krishnendu Chatterjee  <krishnendu.chatterjee@gmail.com>
+
+* module/Cryostat: A new module, named Cryostat, is added. It deals with cryostat and insert. Current supported models are:
+
+	Cryostats:
+
+		 i) Double walled steel
+		ii) Quartz with electro-magnet
+
+	Inserts:
+
+		  i) R-T
+		 ii) X-T
+		iii) R-T high resistance
+		 iv) R-T with heater
+
+* module/xtcon: It uses cryostat module as a resource for applying temperature sensor map for different inserts. For example, for R-T insert with heater, the sample temperature and heater temperature are identical.
+
+* ppsel/res, ppsel/hires, ppsel/sus: While preparing for a run, these modules manipulate cryostat settings based run mode.
+
+2016-09-03  Krishnendu Chatterjee  <krishnendu.chatterjee@gmail.com>
+
+* module/mgps/MGPS_Method: Field run_mode is added to MGPS method class.
+
+* ppsel/res: MGPS support is added to resistivity module. Two new run modes -- (i) R-T (linear ramp) with H, and (ii) R-H vs T (stepped ramp) -- have been added.
+
+* ppsel/res/(res, app_res): GUI_RH_SettingsPanel and GUI_RH_SettingsDialog added. The dialog can be opened from 'R-H settings' menu item.
+
+### 2.2.0
+
+2016-05-04  Krishnendu Chatterjee  <krishnendu.chatterjee@gmail.com>
+
+* app/Preferences: Get preferences first read from system preferences, then override from user preferences.
+
+* app/Preferences: Set preferences write both to user and system preferences. However, if the user does not have admin right, changes in system preferences are discarded.
+
+* apps/AppGlobalSettings: All entries are made active. is_admin() function is no longer in use.
+
+------------------------------------------------------------------------
+r348 | (no author) | 2014-12-31 14:02:21 +0530 (Wed, 31 Dec 2014) | 1 line
+
+Initial position of the probe in XF(T) step ramp fixed -- Krish
+------------------------------------------------------------------------
+r347 | (no author) | 2014-12-30 16:04:16 +0530 (Tue, 30 Dec 2014) | 1 line
+
+More bug fixes -- Krish
+------------------------------------------------------------------------
+r346 | (no author) | 2014-12-30 14:31:06 +0530 (Tue, 30 Dec 2014) | 1 line
+
+Bug fixes -- Krish
+------------------------------------------------------------------------
+r345 | (no author) | 2014-12-29 20:44:21 +0530 (Mon, 29 Dec 2014) | 6 lines
+
+** Break line implemented in SUS module.
+
+** Plot legends added in TCON and SUS modules.
+
+-- Krish
+
+------------------------------------------------------------------------
+r344 | (no author) | 2014-12-27 17:30:27 +0530 (Sat, 27 Dec 2014) | 1 line
+
+XSMU and XLIA modules now have clearly indicated breakline implementation when plotting and updating dataset. RES also updated in accordance with XSMU. --Anurag
+------------------------------------------------------------------------
+r343 | (no author) | 2014-12-25 19:00:15 +0530 (Thu, 25 Dec 2014) | 1 line
+
+Minor bug fix and improvement -- Krish
+------------------------------------------------------------------------
+r342 | (no author) | 2014-12-24 18:32:55 +0530 (Wed, 24 Dec 2014) | 1 line
+
+More bug fixes -- Krish
+------------------------------------------------------------------------
+r341 | (no author) | 2014-12-24 14:03:13 +0530 (Wed, 24 Dec 2014) | 4 lines
+
+** Call to grid_info is replaced with grid_slaves. Hopefully this will avoid an internal error in Tk library.
+
+-- Krish
+
+------------------------------------------------------------------------
+r340 | (no author) | 2014-12-24 13:44:36 +0530 (Wed, 24 Dec 2014) | 6 lines
+
+** Start run clears all plot widgets from dependant modules.
+
+** set_status function now prints on terminal too. The format is "<hh:mm:ss:MOD> message"
+
+-- Krish
+
+------------------------------------------------------------------------
+r339 | (no author) | 2014-12-24 11:46:11 +0530 (Wed, 24 Dec 2014) | 4 lines
+
+** XLIA and SUS modules are updated. Ready to be tested.
+
+-- Krish
+
+------------------------------------------------------------------------
+r338 | (no author) | 2014-12-20 21:46:38 +0530 (Sat, 20 Dec 2014) | 4 lines
+
+** Module usage are made streamline. Currently tcon, xsmu, xmc, and res modules are updated.
+
+-- Krish
+
+------------------------------------------------------------------------
+r337 | (no author) | 2014-12-19 12:58:51 +0530 (Fri, 19 Dec 2014) | 1 line
+
+XMC module updated. --Anurag
+------------------------------------------------------------------------
+r336 | (no author) | 2014-12-18 21:39:24 +0530 (Thu, 18 Dec 2014) | 1 line
+
+Thread-safe and simple tcon, xsmu, and res modules created -- Krish
+------------------------------------------------------------------------
+r335 | (no author) | 2014-12-18 21:37:25 +0530 (Thu, 18 Dec 2014) | 1 line
+
+Devel branch TwoPosXT.1 created -- Krish
+------------------------------------------------------------------------
+r334 | (no author) | 2014-12-16 13:49:18 +0530 (Tue, 16 Dec 2014) | 1 line
+
+XMC new wrapper implemented. Halt functionality on stall added. --Anurag
+------------------------------------------------------------------------
+r333 | (no author) | 2014-12-11 11:31:48 +0530 (Thu, 11 Dec 2014) | 1 line
+
+String 'Motor controller' changed to 'Sample positioner' in all places -- Krish
+------------------------------------------------------------------------
+r332 | (no author) | 2014-12-11 11:27:16 +0530 (Thu, 11 Dec 2014) | 1 line
+
+Banner added in XMC module -- Krish
+------------------------------------------------------------------------
+r331 | (no author) | 2014-12-10 14:13:44 +0530 (Wed, 10 Dec 2014) | 12 lines
+
+** Sample module has been updated with a singleton interface.
+
+** Now user can enter sample details, e.g. name, identity, and description, which are remembered between two successive sessions of Qrius software.
+
+** The destination folder of a run is set to (SampleName + SampleID), inside user selected data folder.
+
+** Sample details are stored in the #commented header of all csv files, as well as in .xpl files (with key = __sample__)
+
+** Sample details are also shown in the left panel of analyzer window.
+
+-- Krish
+
+------------------------------------------------------------------------
+r330 | (no author) | 2014-12-09 16:49:00 +0530 (Tue, 09 Dec 2014) | 10 lines
+
+** All modifications mentioned below are related to proper termination of the application.
+
+** Threads and "after calls" from all modules, viz. tcon, xsmu, xlia, xmc, res, and sus, are terminated properly when exiting the application.
+
+** A singleton object is made to keep track of its masters. In case there are multiple masters, its destructor is executed only after the last master has released the object.
+
+** Display widgets, which can automatically synchronize all their instances, has been equipped with a "close" function to indicate a detachment of an instance.
+
+-- Krish
+
+------------------------------------------------------------------------
+r329 | (no author) | 2014-12-09 11:37:33 +0530 (Tue, 09 Dec 2014) | 1 line
+
+xtcon module path has been made similar to that of xsmu, xlia, and xmc. -- Krish
+------------------------------------------------------------------------
+r328 | (no author) | 2014-12-08 22:06:14 +0530 (Mon, 08 Dec 2014) | 7 lines
+
+** Thread termination bugs fixed.
+
+** I-V plot can now be run in pure I, or pure V mode by respectively settings dV or dI = 0.
+
+-- Krish
+
+
+------------------------------------------------------------------------
+r327 | (no author) | 2014-12-08 18:04:56 +0530 (Mon, 08 Dec 2014) | 1 line
+
+TODO updated
+------------------------------------------------------------------------
+r326 | (no author) | 2014-12-08 17:32:24 +0530 (Mon, 08 Dec 2014) | 4 lines
+
+** Proper thread termination calls introduced in XSMU and XThread module.
+
+-- Krish
+
+------------------------------------------------------------------------
+r325 | (no author) | 2014-12-08 17:05:53 +0530 (Mon, 08 Dec 2014) | 1 line
+
+TkFix deleted -- Krish
+------------------------------------------------------------------------
+r324 | (no author) | 2014-12-08 11:12:19 +0530 (Mon, 08 Dec 2014) | 1 line
+
+Plot2D library updated -- Krish
+------------------------------------------------------------------------
+r323 | (no author) | 2014-12-06 16:11:42 +0530 (Sat, 06 Dec 2014) | 1 line
+
+TkFix is now applied only for Python version <= 2.7.6. TkFix now has two possible workaround bugfixes. --Anurag
+------------------------------------------------------------------------
+r322 | (no author) | 2014-12-05 16:32:34 +0530 (Fri, 05 Dec 2014) | 1 line
+
+TkFix added to bypass Tkinter Tcl_Obj bug. --Anurag
+------------------------------------------------------------------------
+r321 | (no author) | 2014-12-05 16:32:20 +0530 (Fri, 05 Dec 2014) | 1 line
+
+TkFix added to bypass Tkinter Tcl_Obj bug. --Anurag
+------------------------------------------------------------------------
+r320 | (no author) | 2014-12-02 13:59:22 +0530 (Tue, 02 Dec 2014) | 4 lines
+
+** XSMU doExcitationAutoTune improved.
+
+-- Krish
+
+------------------------------------------------------------------------
+r319 | (no author) | 2014-11-28 18:12:00 +0530 (Fri, 28 Nov 2014) | 4 lines
+
+** Displayed heater power unit corrected (to %). Also updated in .csv and .xpl files.
+
+-- Krish
+
+------------------------------------------------------------------------
+r318 | (no author) | 2014-11-28 17:09:59 +0530 (Fri, 28 Nov 2014) | 1 line
+
+Updated TODO --Nishant
+------------------------------------------------------------------------
+r317 | (no author) | 2014-11-18 19:01:57 +0530 (Tue, 18 Nov 2014) | 6 lines
+
+** ZeroDivisionError exception handled in xsmu's _estimateExcitationParameters function.
+
+** In data file, drive voltage field header has been changed to "Vsrc".
+
+-- Krish
+
+------------------------------------------------------------------------
+r316 | (no author) | 2014-10-28 15:28:46 +0530 (Tue, 28 Oct 2014) | 1 line
+
+Changed the communication timeout from 1 second to 2 second --Nishant
+------------------------------------------------------------------------
+r315 | (no author) | 2014-10-28 15:24:24 +0530 (Tue, 28 Oct 2014) | 1 line
+
+Command line Capacitance measurement code --Nishant
+------------------------------------------------------------------------
+r314 | (no author) | 2014-10-27 17:23:13 +0530 (Mon, 27 Oct 2014) | 1 line
+
+A new folder, 'cap' added for experimental development of capacitor measurement module -- Krish
+------------------------------------------------------------------------
+r313 | (no author) | 2014-10-16 15:52:44 +0530 (Thu, 16 Oct 2014) | 8 lines
+
+** While exporting xpl runs to csv format, lines containing field headers and corresponding units are commented out with #.
+
+** Makefile updated. Cleaning the project removes trailing spaces from *.py.
+
+** All trailing spaces removed from *.py.
+
+-- Krish
+
+------------------------------------------------------------------------
+r312 | (no author) | 2014-10-16 15:12:30 +0530 (Thu, 16 Oct 2014) | 1 line
+
+TODO.txt updated --Nishant
+------------------------------------------------------------------------
+r300 | (no author) | 2014-09-18 13:32:47 +0530 (Thu, 18 Sep 2014) | 1 line
+
+Tcon driver functions modified to support libxtcon functionality. --Anurag
+------------------------------------------------------------------------
+r299 | (no author) | 2014-09-17 14:35:50 +0530 (Wed, 17 Sep 2014) | 2 lines
+
+* Added a line in main.py to disable object sharing between _tkinter and Tk/Tcl by setting Tkinter.wantobjects = False. This should not have any effect on rest of the program. For details refer to http://bytes.com/topic/python/answers/25652-tkfiledialog-askdirectory. This is done to remove a bug occuring on ubuntu 14.04 system (running with latest packages) while opening a run using Analyzer app. --Nishant
+
+------------------------------------------------------------------------
+r293 | (no author) | 2014-09-09 11:27:25 +0530 (Tue, 09 Sep 2014) | 1 line
+
+Bug in TCON driver module fixed. --Anurag
+------------------------------------------------------------------------
+r286 | (no author) | 2014-09-04 18:09:33 +0530 (Thu, 04 Sep 2014) | 1 line
+
+Driver class in TCON module updated with new software. TCON serial number added to GlobalSettings. Minor bug in XMC module fixed. --Anurag
+------------------------------------------------------------------------
+r280 | (no author) | 2014-08-28 12:40:16 +0530 (Thu, 28 Aug 2014) | 1 line
+
+Qrius GUI updated. --Anurag
+------------------------------------------------------------------------
+r279 | (no author) | 2014-08-26 16:25:15 +0530 (Tue, 26 Aug 2014) | 1 line
+
+Xlia, Xmc, Xtcon and Sus modules and threads will now use Utility modules for acquisition and control. --Anurag
+------------------------------------------------------------------------
+r275 | (no author) | 2014-08-22 11:17:58 +0530 (Fri, 22 Aug 2014) | 10 lines
+
+++++ Changes in xsmu.py ++++
+
+** cm_range settings in sourceParameters and meterParameters are synchronized.
+** Driver callback to device thread now waits for scheduled task to complete. This is important to perculate device data to different threads.
+** I-V loop is improved. It now uses Vsrc (instead of Vsample) and current to loop over entire I-V range.
+** output_off function is improved. Now it suitably selects between voltage (high resistance load) or current (low resistance load) source to switch off excitation.
+
+-- Krish
+
+
+------------------------------------------------------------------------
+r273 | (no author) | 2014-08-20 15:52:49 +0530 (Wed, 20 Aug 2014) | 4 lines
+
+** I-V loop was buggy. Vsrc should be considered while auto tuning the excitation. Fixed.
+
+-- Krish
+
+------------------------------------------------------------------------
+r272 | (no author) | 2014-08-19 16:41:15 +0530 (Tue, 19 Aug 2014) | 1 line
+
+Sus ChiT acquisition thread modified. --Anurag
+------------------------------------------------------------------------
+r271 | (no author) | 2014-08-19 16:35:49 +0530 (Tue, 19 Aug 2014) | 1 line
+
+Sus ChiT acquisition thread modified. --Anurag
+------------------------------------------------------------------------
+r270 | (no author) | 2014-08-19 16:01:56 +0530 (Tue, 19 Aug 2014) | 1 line
+
+Sus ChiT acquisition thread modified. --Anurag
+------------------------------------------------------------------------
+r269 | (no author) | 2014-08-19 14:50:23 +0530 (Tue, 19 Aug 2014) | 1 line
+
+Sus ChiT acquisition thread modified. Link error support  added to Tcon module. --Anurag
+------------------------------------------------------------------------
+r268 | (no author) | 2014-08-19 12:57:26 +0530 (Tue, 19 Aug 2014) | 1 line
+
+XMC global linac functions modified to prevent thread blocking. Sus ChiT acquisition thread modified. Global functions start/stopHeaterRamp added to Tcon module. --Anurag
+------------------------------------------------------------------------
+r267 | (no author) | 2014-08-18 17:36:59 +0530 (Mon, 18 Aug 2014) | 1 line
+
+ChangeLog updated -- Krish
+------------------------------------------------------------------------
+r266 | (no author) | 2014-08-18 17:32:43 +0530 (Mon, 18 Aug 2014) | 1 line
+
+Sus gui modified. --Anurag
+------------------------------------------------------------------------
+r265 | (no author) | 2014-08-18 15:58:58 +0530 (Mon, 18 Aug 2014) | 1 line
+
+Sus gui modified. --Anurag
+------------------------------------------------------------------------
+r264 | (no author) | 2014-08-18 15:46:56 +0530 (Mon, 18 Aug 2014) | 1 line
+
+XMC module switched back to default orientation. --Anurag
+------------------------------------------------------------------------
+r263 | (no author) | 2014-08-18 15:19:42 +0530 (Mon, 18 Aug 2014) | 1 line
+
+XLIA module modified with new global functions: acquire_current and acquire_signal. --Anurag
+------------------------------------------------------------------------
+r262 | (no author) | 2014-08-18 12:02:22 +0530 (Mon, 18 Aug 2014) | 1 line
+
+XT acquisition thread modified in sus module. --Anurag
+------------------------------------------------------------------------
+r261 | (no author) | 2014-08-18 11:58:17 +0530 (Mon, 18 Aug 2014) | 1 line
+
+XT acquisition thread modified in sus module. --Anurag
+------------------------------------------------------------------------
+r260 | (no author) | 2014-08-18 11:53:53 +0530 (Mon, 18 Aug 2014) | 1 line
+
+XT acquisition thread modified in sus module. --Anurag
+------------------------------------------------------------------------
+r259 | (no author) | 2014-08-18 10:43:14 +0530 (Mon, 18 Aug 2014) | 1 line
+
+SUS gui odified --Anurag
+------------------------------------------------------------------------
+r258 | (no author) | 2014-08-18 10:42:47 +0530 (Mon, 18 Aug 2014) | 1 line
+
+SUS gui odified --Anurag
+------------------------------------------------------------------------
+r257 | (no author) | 2014-08-18 10:34:38 +0530 (Mon, 18 Aug 2014) | 1 line
+
+XFrame class added to XWidget --Anurag
+------------------------------------------------------------------------
+r256 | (no author) | 2014-08-13 16:23:39 +0530 (Wed, 13 Aug 2014) | 1 line
+
+XMC module GUI modified.
+------------------------------------------------------------------------
+r255 | (no author) | 2014-08-13 15:48:11 +0530 (Wed, 13 Aug 2014) | 1 line
+
+XMC module GUI modified.
+------------------------------------------------------------------------
+r254 | (no author) | 2014-08-13 14:51:09 +0530 (Wed, 13 Aug 2014) | 1 line
+
+XMC module GUI modified.
+------------------------------------------------------------------------
+r253 | (no author) | 2014-08-13 14:45:14 +0530 (Wed, 13 Aug 2014) | 1 line
+
+XMC module GUI modified.
+------------------------------------------------------------------------
+r252 | (no author) | 2014-08-13 13:44:12 +0530 (Wed, 13 Aug 2014) | 1 line
+
+Bug in XMC global functions resolved.
+------------------------------------------------------------------------
+r251 | (no author) | 2014-08-13 11:23:30 +0530 (Wed, 13 Aug 2014) | 1 line
+
+Motor controller module integrated in susceptibility measurement. New run modes available : Chi L prep, and Chi L.
+------------------------------------------------------------------------
+r250 | (no author) | 2014-08-09 13:49:26 +0530 (Sat, 09 Aug 2014) | 1 line
+
+Framework to incorporate XMC module in susceptibility module has been created -- Krish
+------------------------------------------------------------------------
+r249 | (no author) | 2014-08-09 12:18:49 +0530 (Sat, 09 Aug 2014) | 1 line
+
+XMC module modified --Anurag
+------------------------------------------------------------------------
+r248 | (no author) | 2014-08-09 11:31:26 +0530 (Sat, 09 Aug 2014) | 1 line
+
+Only ProgressBar and Style classes are imported from ttk -- Krish
+------------------------------------------------------------------------
+r247 | (no author) | 2014-08-09 11:29:49 +0530 (Sat, 09 Aug 2014) | 1 line
+
+XMC_datatype added --Anurag
+------------------------------------------------------------------------
+r246 | (no author) | 2014-08-09 11:26:07 +0530 (Sat, 09 Aug 2014) | 1 line
+
+Driver function names modified with linac and motor keywords in XMC module --Anurag
+------------------------------------------------------------------------
+r245 | (no author) | 2014-08-08 17:04:24 +0530 (Fri, 08 Aug 2014) | 1 line
+
+XMC module working version  --Anurag
+------------------------------------------------------------------------
+r244 | (no author) | 2014-08-08 16:57:12 +0530 (Fri, 08 Aug 2014) | 1 line
+
+Acquisition thread and plotting method added to XMC module --Anurag
+------------------------------------------------------------------------
+r243 | (no author) | 2014-08-08 13:55:19 +0530 (Fri, 08 Aug 2014) | 1 line
+
+Module xmc code format updated -- Krish
+------------------------------------------------------------------------
+r242 | (no author) | 2014-08-07 16:17:13 +0530 (Thu, 07 Aug 2014) | 1 line
+
+XMC GUI modified -- Anurag
+------------------------------------------------------------------------
+r241 | (no author) | 2014-08-07 15:58:37 +0530 (Thu, 07 Aug 2014) | 1 line
+
+XMC GUI slightly modified -- Anurag
+------------------------------------------------------------------------
+r240 | (no author) | 2014-08-07 13:26:45 +0530 (Thu, 07 Aug 2014) | 1 line
+
+XMC module modified-- Anurag
+------------------------------------------------------------------------
+r239 | (no author) | 2014-08-07 12:59:35 +0530 (Thu, 07 Aug 2014) | 1 line
+
+Working version -- Anurag
+------------------------------------------------------------------------
+r238 | (no author) | 2014-08-07 12:37:24 +0530 (Thu, 07 Aug 2014) | 1 line
+
+Working version -- Anurag
+------------------------------------------------------------------------
+r237 | (no author) | 2014-08-06 17:10:54 +0530 (Wed, 06 Aug 2014) | 1 line
+
+XMC module slightly modified -- Anurag
+------------------------------------------------------------------------
+r236 | (no author) | 2014-08-06 16:00:54 +0530 (Wed, 06 Aug 2014) | 1 line
+
+GUI for XMC module added. -- Anurag
+------------------------------------------------------------------------
+r235 | (no author) | 2014-08-05 11:41:29 +0530 (Tue, 05 Aug 2014) | 1 line
+
+A few typo error has been fixed -- Krish
+------------------------------------------------------------------------
+r234 | (no author) | 2014-08-05 11:36:31 +0530 (Tue, 05 Aug 2014) | 1 line
+
+Motor controller module added -- Krish
+------------------------------------------------------------------------
+r233 | (no author) | 2014-08-01 17:19:28 +0530 (Fri, 01 Aug 2014) | 1 line
+
+TCON Calibration Module Modified. -- Anurag
+------------------------------------------------------------------------
+r232 | (no author) | 2014-08-01 16:15:00 +0530 (Fri, 01 Aug 2014) | 1 line
+
+TCON Calibration Module Modified. -- Anurag
+------------------------------------------------------------------------
+r231 | (no author) | 2014-08-01 15:30:04 +0530 (Fri, 01 Aug 2014) | 1 line
+
+In TCON Calibration module the Pt100 resistance can be set different from the Default value of 100 Ohms --Anurag
+------------------------------------------------------------------------
+r230 | (no author) | 2014-08-01 13:59:37 +0530 (Fri, 01 Aug 2014) | 8 lines
+
+** TCON calibration GUI appearance is made uniform to rest of the application.
+
+** Driver calibration functions are improved by using constants defined in TCON_Constants module.
+
+** Default interpreter is set to python2 in main.py
+
+-- Krish
+
+------------------------------------------------------------------------
+r229 | (no author) | 2014-08-01 12:54:56 +0530 (Fri, 01 Aug 2014) | 1 line
+
+TCON Calibration Module Added. -- Anurag
+------------------------------------------------------------------------
+r228 | (no author) | 2014-07-31 16:48:24 +0530 (Thu, 31 Jul 2014) | 4 lines
+
+** Other possible serial port open exceptions, viz. IOError, OSError, are caught as well.
+
+-- Krish
+
+------------------------------------------------------------------------
+r227 | (no author) | 2014-07-31 16:37:17 +0530 (Thu, 31 Jul 2014) | 6 lines
+
+** Plot2D now uses pack method. A conflict between grid and pack observed in Arch linux.
+
+** 'qrius' and 'install' shell-script explicitly specifies python2.
+
+-- Krish
+
+------------------------------------------------------------------------
+r226 | (no author) | 2014-07-31 16:18:40 +0530 (Thu, 31 Jul 2014) | 6 lines
+
+** Bug in TCON PID settings fixed.
+
+** A new utility to plot chi as a function of probe position has been written. This uses newly created libxmc library. This is yet to be merged into sus.py module.
+
+-- Krish
+
+------------------------------------------------------------------------
+r225 | (no author) | 2014-07-23 13:35:25 +0530 (Wed, 23 Jul 2014) | 1 line
+
+Bugs in xsmu and res module fixed -- Krish
+------------------------------------------------------------------------
+r224 | (no author) | 2014-06-25 16:11:55 +0530 (Wed, 25 Jun 2014) | 1 line
+
+A minor bug in sus module fixed -- Krish
+------------------------------------------------------------------------
+r223 | (no author) | 2014-06-25 12:56:41 +0530 (Wed, 25 Jun 2014) | 1 line
+
+ChangeLog updated -- Krish
+------------------------------------------------------------------------
+r222 | (no author) | 2014-06-25 12:54:51 +0530 (Wed, 25 Jun 2014) | 6 lines
+
+** TCON, XSMU, and XLIA modules can now be opened directly from the main window using "Modules Manager" dialog.
+
+** Module ppsel cleaned up.
+
+-- Krish
+
+------------------------------------------------------------------------
+r221 | (no author) | 2014-06-23 13:21:41 +0530 (Mon, 23 Jun 2014) | 1 line
+
+While starting stepped ramp, it always starts from initialTemperature of the first ramp, and not from the current heater temperature -- Krish
+------------------------------------------------------------------------
+r220 | (no author) | 2014-06-23 11:41:39 +0530 (Mon, 23 Jun 2014) | 4 lines
+
+** Operator intervention is added in stepped mode susceptibility measurement.
+
+-- Krish
+
+------------------------------------------------------------------------
+r219 | (no author) | 2014-06-13 12:58:47 +0530 (Fri, 13 Jun 2014) | 1 line
+
+Devel branch for two position X-T created -- Krish
+------------------------------------------------------------------------
+r218 | (no author) | 2014-06-13 11:09:32 +0530 (Fri, 13 Jun 2014) | 1 line
+
+A typo bug in xlia module fixed -- Krish
+------------------------------------------------------------------------
+r217 | (no author) | 2014-06-10 18:37:32 +0530 (Tue, 10 Jun 2014) | 1 line
+
+Multiple traces can be superposed in Analyzer window -- Krish
+------------------------------------------------------------------------
+r216 | (no author) | 2014-06-10 18:36:59 +0530 (Tue, 10 Jun 2014) | 1 line
+
+Auto selection of color implemented in Plot2D -- Krish
+------------------------------------------------------------------------
+r215 | (no author) | 2014-06-10 18:14:42 +0530 (Tue, 10 Jun 2014) | 1 line
+
+Analyzer applet upgraded -- Krish
+------------------------------------------------------------------------
+r214 | (no author) | 2014-06-07 16:51:02 +0530 (Sat, 07 Jun 2014) | 1 line
+
+ChangeLog updated -- Krish
+------------------------------------------------------------------------
+r213 | (no author) | 2014-06-07 16:50:48 +0530 (Sat, 07 Jun 2014) | 4 lines
+
+** Individual method modules are implemented in TCON, XSMU, XLIA, RES, and SUS modules.
+
+-- Krish
+
+------------------------------------------------------------------------
+r212 | (no author) | 2014-06-06 17:31:42 +0530 (Fri, 06 Jun 2014) | 6 lines
+
+** XMethod module created to store instrument settings in file, pretty much like GC methods.
+
+** Module xlia, tcon, and sus now use XMethod to save/apply their settings.
+
+-- Krish
+
+------------------------------------------------------------------------
+r211 | (no author) | 2014-06-05 16:29:46 +0530 (Thu, 05 Jun 2014) | 1 line
+
+RES2 and res2 names changed to RES and res respectively -- Krish
+------------------------------------------------------------------------
+r210 | (no author) | 2014-06-05 14:54:08 +0530 (Thu, 05 Jun 2014) | 7 lines
+
+** Bug in SUS_DataType fixed.
+** Welcome tab added in Res2 module.
+** Plots are shown in tabs in Res2 module.
+** Run modes changed in Res2 module.
+
+-- Krish
+
+------------------------------------------------------------------------
+r209 | (no author) | 2014-06-02 14:10:55 +0530 (Mon, 02 Jun 2014) | 4 lines
+
+** The private copies of XLIA class variables were not updated upon modifications from ReferenceParameter and MeasurementSettings dialogs. Fixed.
+
+-- Krish
+
+------------------------------------------------------------------------
+r208 | (no author) | 2014-06-02 13:13:16 +0530 (Mon, 02 Jun 2014) | 4 lines
+
+** Call to vHeaterOff function was missing in vDeactivatePID. Fixed.
+
+-- Krish
+
+------------------------------------------------------------------------
+r207 | (no author) | 2014-06-02 12:32:06 +0530 (Mon, 02 Jun 2014) | 5 lines
+
+** Bug in tcon, xlia, and sus module fixed.
+** doQuickMeasurement is replaced with doMeasurement in current regulation function in xlia.
+
+-- Krish
+
+------------------------------------------------------------------------
+r206 | (no author) | 2014-05-31 18:23:58 +0530 (Sat, 31 May 2014) | 6 lines
+
+** Current and voltage controlled excitation modes are added in XLIA module.
+
+** Welcome banners are added in XLIA, TCON, and sus modules.
+
+-- Krish
+
+------------------------------------------------------------------------
+r205 | (no author) | 2014-05-30 13:06:00 +0530 (Fri, 30 May 2014) | 4 lines
+
+** Some class names in tcon, xsmu, and xlia modules were mis-spelled. Got run time error. Fixed.
+
+-- Krish
+
+------------------------------------------------------------------------
+r204 | (no author) | 2014-05-30 11:13:00 +0530 (Fri, 30 May 2014) | 4 lines
+
+** Heater temperature and sample temperature Trace colours are interchanged in tcon module.
+
+-- Krish
+
+------------------------------------------------------------------------
+r203 | (no author) | 2014-05-29 16:10:39 +0530 (Thu, 29 May 2014) | 4 lines
+
+** XLIA V-Time acquisition thread has been configured as a background thread in X-T acquisition mode under stepped ramp heating.
+
+-- Krish
+
+------------------------------------------------------------------------
+r202 | (no author) | 2014-05-29 15:58:53 +0530 (Thu, 29 May 2014) | 4 lines
+
+** TCON hardware does not have the correct PID values as default settings. Hence PID settings needs to be sent to TCON hardware after connecting to the device.
+
+-- Krish
+
+------------------------------------------------------------------------
+r201 | (no author) | 2014-05-29 15:08:14 +0530 (Thu, 29 May 2014) | 8 lines
+
+** XTab widget implemented. Now each run opens its own plot.
+
+** Susceptibility module is implmented using thread model of xtcon and xlia.
+
+** XThread module has a new class called XEvent. This facilitates a new schedule task function call schedule_task_n_wait, which is used to call a function and receive a return value. The function remain blocked which the task is in queue.
+
+-- Krish
+
+------------------------------------------------------------------------
+r200 | (no author) | 2014-05-27 17:48:59 +0530 (Tue, 27 May 2014) | 4 lines
+
+** V-F and V-Time threads implemented in XLIA module.
+
+-- Krish
+
+------------------------------------------------------------------------
+r199 | (no author) | 2014-05-24 17:28:01 +0530 (Sat, 24 May 2014) | 1 line
+
+TCON activeStepIndex was buggy. Fixed -- Krish
+------------------------------------------------------------------------
+r198 | (no author) | 2014-05-24 17:01:46 +0530 (Sat, 24 May 2014) | 4 lines
+
+** While openning a device, serial number is checked in the scanned device list. Without this, the libxlia and libxsmu were producing  segmentation fault on Ubuntu.
+
+--Krish
+
+------------------------------------------------------------------------
+r197 | (no author) | 2014-05-24 14:41:41 +0530 (Sat, 24 May 2014) | 1 line
+
+File RES2_Constants missed. Added -- Jrusg
+------------------------------------------------------------------------
+r196 | (no author) | 2014-05-24 13:55:58 +0530 (Sat, 24 May 2014) | 4 lines
+
+** More function added to XThread for flexible thread synchronization.
+
+-- Krish
+
+------------------------------------------------------------------------
+r195 | (no author) | 2014-05-22 19:40:41 +0530 (Thu, 22 May 2014) | 4 lines
+
+** Isothermal I-V with thread interlocking architecture seems to be working. Need more testing.
+
+-- Krish
+
+------------------------------------------------------------------------
+r194 | (no author) | 2014-05-22 16:11:38 +0530 (Thu, 22 May 2014) | 7 lines
+
+** Bug fix in XLIA module.
+** Bug fix in TCON_Driver.
+
+-- Krish
+
+
+
+------------------------------------------------------------------------
+r193 | (no author) | 2014-05-21 18:14:54 +0530 (Wed, 21 May 2014) | 8 lines
+
+** XLIA reference and measurement settings dialogs implemented. Though buggy.
+
+** I-V and R-Time run can be taken from XSMU module.
+
+** Acquisition settings, I-V ramp settings, ohmmeter settings dialogs implemented in XSMU module.
+
+-- Krish
+
+------------------------------------------------------------------------
+r192 | (no author) | 2014-05-10 17:53:09 +0530 (Sat, 10 May 2014) | 4 lines
+
+** XLIA module has re-written with thread support.
+
+-- Krish
+
+------------------------------------------------------------------------
+r191 | (no author) | 2014-05-08 16:14:11 +0530 (Thu, 08 May 2014) | 1 line
+
+Constant current and constant voltage modules are unified in res2. Thus res4 is deleted -- Krish
+------------------------------------------------------------------------
+r190 | (no author) | 2014-05-08 16:05:20 +0530 (Thu, 08 May 2014) | 8 lines
+
+** Resistance measurement settings added to res2.
+
+** Auto excitation tuning is performed either under DC load line, or AC load line, which can be selected by the user.
+
+** System tested with 70E and 1G resistive load.
+
+-- Krish
+
+------------------------------------------------------------------------
+r189 | (no author) | 2014-05-03 20:29:31 +0530 (Sat, 03 May 2014) | 4 lines
+
+** Bugs fixing in I-V source/meter auto ranging.
+
+-- Krish
+
+------------------------------------------------------------------------
+r188 | (no author) | 2014-05-02 20:29:09 +0530 (Fri, 02 May 2014) | 6 lines
+
+** I-V source and meter auto ranging implemented.
+
+** In RES2, I-V ramp settings entry and display widgets added.
+
+-- Krish
+
+------------------------------------------------------------------------
+r187 | (no author) | 2014-04-24 17:55:35 +0530 (Thu, 24 Apr 2014) | 4 lines
+
+** XSMU source and meter parameters setting dialogs added.
+
+-- Krish
+
+------------------------------------------------------------------------
+r186 | (no author) | 2014-04-24 10:46:57 +0530 (Thu, 24 Apr 2014) | 8 lines
+
+** Just like TCON, XSMU controller is also assigned a separate window. Previously it was a part of res2 and res4.
+
+** Only RES2 window is shown when lauched from ppsel module. To open TCON and XSMU windows, use buttons in the RES2 window.
+
+** All these windows can be withdrawn from the screen by crossing them. However, they still run in the background, and can be brought forward at any time by calling their 'show' method.
+
+-- Krish
+
+------------------------------------------------------------------------
+r185 | (no author) | 2014-04-22 11:33:27 +0530 (Tue, 22 Apr 2014) | 8 lines
+
+** Direct connection with device's serial number
+
+The (USB) serial numbers of xsmu and xlia are directly used while opening communication channels to these devices. No scan is done.
+
+These numbers are chosen through "Global Settings" dialog, from the lists of serial numbers of currently connected devices. The chosen numbers are saved with Preferences module.
+
+-- Krish
+
+------------------------------------------------------------------------
+r184 | (no author) | 2014-04-19 17:50:06 +0530 (Sat, 19 Apr 2014) | 5 lines
+
+** Bug fix. TCON and RES2 interlock improved.
+
+-- Krish
+
+
+------------------------------------------------------------------------
+r183 | (no author) | 2014-04-19 14:29:54 +0530 (Sat, 19 Apr 2014) | 4 lines
+
+** First run with Res2_IV and TCON_Monitor thread interlocked. Promising performance.
+
+-- Krish
+
+------------------------------------------------------------------------
+r182 | (no author) | 2014-04-18 18:21:41 +0530 (Fri, 18 Apr 2014) | 8 lines
+
+** XThread and XThreadInterlock classes improved.
+
+** XThreadMonitor class implemented for garbage collection and freeing thread interlocks at the end of a run.
+
+** tcon.py and res2.py improved.
+
+-- Krish
+
+------------------------------------------------------------------------
+r181 | (no author) | 2014-04-15 16:06:21 +0530 (Tue, 15 Apr 2014) | 12 lines
+
+** Intermediate version
+
+	++ Stepped temperature ramp facility added.
+
+	++ Thread support added for tcon module.
+
+	++ Tcon gui changed.
+
+	++ res2, res4, and sus are no longer compatible with tcon. Hence they won't run.
+
+-- Krish
+
+------------------------------------------------------------------------
+r180 | (no author) | 2014-03-31 17:57:11 +0530 (Mon, 31 Mar 2014) | 4 lines
+
+** The timeout delay in SMU communication (during CM/VM read and calibration) is adaptively changed based on firmware version information.
+
+-- Krish
+
+------------------------------------------------------------------------
+r179 | (no author) | 2014-03-24 16:08:57 +0530 (Mon, 24 Mar 2014) | 1 line
+
+Devel branch for I-V and X-T with temperature stepping created -- Krish
+------------------------------------------------------------------------
+r177 | (no author) | 2014-03-24 11:20:16 +0530 (Mon, 24 Mar 2014) | 1 line
+
+Install script updated to delete svn related files from install_dir -- Krish
+------------------------------------------------------------------------
+r175 | (no author) | 2014-03-18 14:39:56 +0530 (Tue, 18 Mar 2014) | 8 lines
+
+** A 22 ohm resistor has been connected in series with the primary coil to measure current through it. The resistance is connected in place of the output of the first (non-existing) notch filter, which is named as aux input. A new function, enableAuxInput has been implemented in xlia.py which uses libxlia.enablePreAmpNotch1 as its backend.
+
+** Both X-T and X-F now uses the primary current data (i.e. voltage drop accross the sense resistor) to calculate chiP and chiDP.
+
+** This avoids a (messy) constant current source module with the susceptometer setup.
+
+-- Krish
+
+------------------------------------------------------------------------
+r171 | (no author) | 2014-03-15 13:57:23 +0530 (Sat, 15 Mar 2014) | 1 line
+
+Reintegrate merge from XF_autoscale devel branch -- Krish
+------------------------------------------------------------------------
+r170 | (no author) | 2014-03-15 13:41:15 +0530 (Sat, 15 Mar 2014) | 5 lines
+Merged via: r171
+
+** ChiP and ChiDP are plotted and recorded in AC magnetic susceptibility experiment.
+
+-- Krish
+
+
+------------------------------------------------------------------------
+r169 | (no author) | 2014-03-12 15:22:12 +0530 (Wed, 12 Mar 2014) | 9 lines
+Merged via: r171
+
+** XLIA driver now uses auto range feature of libxlia.
+
+** XLIA driver now uses doMeasurement1 function of libxlia. This function uses only one channel, and reference phase shift to measure amplitude and phase.
+
+** Circular datapoints are removed from plots. Now curves are plotted using line.
+
+-- Krish
+
+
+------------------------------------------------------------------------
+r168 | (no author) | 2014-03-12 15:16:37 +0530 (Wed, 12 Mar 2014) | 1 line
+Merged via: r171
+
+Devel branch XF_autoscale created -- Krish
+------------------------------------------------------------------------
+r166 | (no author) | 2014-03-12 12:25:34 +0530 (Wed, 12 Mar 2014) | 1 line
+
+Qrius upgrade steps updated. -H option added in sudo command for compatibility between different versions of linux -- Krish
+------------------------------------------------------------------------
+r162 | (no author) | 2014-03-12 11:26:41 +0530 (Wed, 12 Mar 2014) | 1 line
+
+Steps to upgrade a Qrius installation are added. -- Krish
+------------------------------------------------------------------------
+r159 | (no author) | 2014-02-21 15:54:41 +0530 (Fri, 21 Feb 2014) | 8 lines
+
+** A new installer script has been added to bin. Older scripts, e.g. setup.sh, have been deleted. It needs root permission to run.
+
+** The installer can perform both fresh installation and upgradation. It takes automatic backup While upgrading a previous installation. The previous folder is renamed with timestamp.
+
+** It creates/appends to an installation log file, named qrius_installer.log, in /var/log/XPLORE folder.
+
+-- Krish
+
+------------------------------------------------------------------------
+r157 | (no author) | 2014-02-05 13:54:11 +0530 (Wed, 05 Feb 2014) | 1 line
+
+X-F loop was buggy. Corrected -- Krish
+------------------------------------------------------------------------
+r151 | (no author) | 2014-01-10 19:58:58 +0530 (Fri, 10 Jan 2014) | 1 line
+
+Merged from devel branch GuiSimplify -- Krish
+------------------------------------------------------------------------
+r150 | (no author) | 2014-01-09 18:20:57 +0530 (Thu, 09 Jan 2014) | 6 lines
+Merged via: r151
+
+** Acquisition settings has been moved into Utility menu in RES4 module.
+
+** AppGlobalSettings, RES2Gui_AquisitionSettings, RES4Gui_AquisitionSettings classes have been improved to handle resize of parent window.
+
+-- Krish
+
+------------------------------------------------------------------------
+r149 | (no author) | 2014-01-08 18:38:35 +0530 (Wed, 08 Jan 2014) | 8 lines
+Merged via: r151
+
+** TCON plot color has been made uniform with the rest of the application. Now the sample temperature is plotted in blue, and heater temperature is plotted in black. Earlier they were reversed.
+
+** Checking of loop boundary condition, e.g. in I-V, R-T, X-F, and X-T sweeps, has been updated. Earlier it used to acquire one extra point at the end of a run.
+
+** Acquisition settings have been removed from the main window of RES2. Now it appears in the utiliy menu.
+
+-- Krish
+
+------------------------------------------------------------------------
+r148 | (no author) | 2014-01-08 12:13:24 +0530 (Wed, 08 Jan 2014) | 1 line
+Merged via: r151
+
+Devel branch GuiSimplify created -- Krish
+------------------------------------------------------------------------
+r143 | (no author) | 2014-01-02 15:56:54 +0530 (Thu, 02 Jan 2014) | 1 line
+
+Reintegrate merge from XWidget devel branch -- Krish
+------------------------------------------------------------------------
+r142 | (no author) | 2014-01-01 19:28:39 +0530 (Wed, 01 Jan 2014) | 6 lines
+Merged via: r143
+
+** vHeaterOff is called while stopping heater control/ramp.
+
+** All parameters in tcon gui are refreshed even if the system is idle.
+
+-- Krish
+
+------------------------------------------------------------------------
+r141 | (no author) | 2013-12-31 13:27:57 +0530 (Tue, 31 Dec 2013) | 1 line
+Merged via: r143
+
+Synchronized from trunk -- Krish
+------------------------------------------------------------------------
+r139 | (no author) | 2013-12-30 18:19:36 +0530 (Mon, 30 Dec 2013) | 6 lines
+Merged via: r143
+
+** TCON_Driver tries 5 times on an open port before declaring that the device is not a TCON.
+
+** While updating temperature parameters during a run, temperature setpoint is not automatically updated.
+
+-- Krish
+
+------------------------------------------------------------------------
+r138 | (no author) | 2013-12-28 20:44:52 +0530 (Sat, 28 Dec 2013) | 6 lines
+Merged via: r143
+
+** Minor bug removal.
+
+** While stopping a run, stop button is deactivated with a prompt that the run is being stopped. So that user does not panic.
+
+-- Krish
+
+------------------------------------------------------------------------
+r137 | (no author) | 2013-12-28 20:21:46 +0530 (Sat, 28 Dec 2013) | 8 lines
+Merged via: r143
+
+** tcon, res2, and res4 modules now have a menu bar from where the hardware can be re-connected without exiting the application.
+
+** A new class named XLIA_Driver has been implemented to make xlia module more readable.
+
+** While plotting X-F, X-axis is changed to log scale in non-uniform frequency stepping mode.
+
+-- Krish
+
+------------------------------------------------------------------------
+r136 | (no author) | 2013-12-28 14:32:37 +0530 (Sat, 28 Dec 2013) | 12 lines
+Merged via: r143
+
+** Susceptibility module structure has been unified with res2 and res4.
+
+** A separate class named XLIA_Driver has been implemented in xlia module.
+
+** Export callback implemented in AppAnalyzer module. It save the data in csv format.
+
+** In susceptibility measurement, chi is normalized with respect to reference amplitude as well as reference frequency. This is required because secondary pickup of the susceptometer is linearly dependant on both drive amplitude and frequency.
+
+** While plotting X-F, the user has a choice to perform either uniform stepping or non-uniform stepping. In the former, the stepping size is fixed, while in the latter the stepping size is expressed as a percentage of the current frequency. Thus while sweeping over a large range, non-uniform stepping is more useful.
+
+-- Krish
+
+------------------------------------------------------------------------
+r135 | (no author) | 2013-12-26 16:18:53 +0530 (Thu, 26 Dec 2013) | 14 lines
+Merged via: r143
+
+** The following modules now use XFloatEntry and XIntegerEntry widgets.
+
+	-- app_tcon, tcon
+	-- app_res2, res2
+	-- app_res4, res4
+	-- app_xlia, xlia
+	-- app_sus,  sus
+
+** TCON_Driver has been implemented as an independant class.
+
+** Module tcon, res2, and res4 structures have been made identical.
+
+-- Krish
+
+------------------------------------------------------------------------
+r133 | (no author) | 2013-12-23 14:07:26 +0530 (Mon, 23 Dec 2013) | 12 lines
+Merged via: r143
+
+** Qrius has some entry widgets that change background color while typing. These are particularly important when communicating to a hardware. For example, the temperature setpoint widget becomes white while typing and becomes yellow after the entered value is successfully set.
+
+Earlier this was done explicitely in the callback of each widget. This increases the length of the code, and makes it untidy. Three classes, viz. XEntry, XFloatEntry, and XIntegerEntry, have been implemented to incorporate this feature at the widget level.
+
+Here, the widget changes its background color to 'peach puff' (light red) on each callback, which is initiated if the user has typed in a new value or by pressing 'Enter'.
+
+In the callback routine, the widget value is reset to actual (e.g. the value as returned by the hardware), which also sets its background color to 'yellow'.
+
+Currently only 'tcon' module is using this widget. All other modules need to use this.
+
+-- Krish
+
+------------------------------------------------------------------------
+r132 | (no author) | 2013-12-23 13:48:59 +0530 (Mon, 23 Dec 2013) | 1 line
+Merged via: r143
+
+Devel branch XWidget created -- Krish
+------------------------------------------------------------------------
+r140 | (no author) | 2013-12-31 13:26:47 +0530 (Tue, 31 Dec 2013) | 1 line
+
+TODO updated -- Krish
+------------------------------------------------------------------------
+r126 | (no author) | 2013-12-21 18:48:26 +0530 (Sat, 21 Dec 2013) | 1 line
+
+Modules names in app_ppsel.py updated -- Krish
+------------------------------------------------------------------------
+r125 | (no author) | 2013-12-21 15:09:30 +0530 (Sat, 21 Dec 2013) | 1 line
+
+reintegrated from XF devel branch -- Krish
+------------------------------------------------------------------------
+r124 | (no author) | 2013-12-21 15:08:03 +0530 (Sat, 21 Dec 2013) | 1 line
+Merged via: r125
+
+Synchronized with trunk -- Krish
+------------------------------------------------------------------------
+r122 | (no author) | 2013-12-20 15:30:17 +0530 (Fri, 20 Dec 2013) | 10 lines
+Merged via: r125, r124
+
+** A new module, named XDict, has been added. This is used to store/retrieve run data using python's dictionary object. The dictionary format has been updated to incorporate (data, unit) as a tuple against a single key. Earlier they are stored using two seperate keys. However, the old runs can still be oened using a compatibility scheme implemented in XDict.
+
+** AppAnalyzer has been re-written using XDict and Plot2D class.
+
+** Widget icons have been made uniform throughout the program. Now they are controlled from a single line in main.py using tkFont module.
+
+** A number of unwanted modules have been deleted, i.e. fileio, fileie, plotxy, tlog.
+
+-- Krish
+
+------------------------------------------------------------------------
+r121 | (no author) | 2013-12-18 20:27:50 +0530 (Wed, 18 Dec 2013) | 10 lines
+Merged via: r125, r124
+
+** Module res2 checked and heavily re-written using object oriented approach.
+
+** Plot2D module added for generic plotting. This module supports zoom and pan while being updated in real time acquisition.
+
+** Module plotrt, plotxt, and plote have been removed. Plot2D is being used in all places, except analyzer, which still uses plotxy.
+
+** Module res4, tcon, and sus have been updated to incorporate Plot2D
+
+-- Krish
+
+------------------------------------------------------------------------
+r107 | (no author) | 2013-12-14 19:40:19 +0530 (Sat, 14 Dec 2013) | 8 lines
+Merged via: r125, r124, r121
+
+** The temperature recording loop in 'tcon' module has been updated as per with acquisition loop in 'res4' module.
+
+In the current implementation, the real time temperature data is logged in a tab seperated file, named 'last_run.log'. This file is created inside USR_DATA_FOLDER/htr directory, where USR_DATA_FOLDER is chosen by the user using 'Global Settings' menu. This file is over-written every time a new run is started. The sole purpose of this file is to provide a way to retrieve the data in case of an unwanted termination of a run, e.g. due to power failure.
+
+On successful completion of a run, the entire data is saved using Python's dictionary format in a time stamped file inside USR_DATA_FOLDER/htr directory.
+
+-- Krish
+
+------------------------------------------------------------------------
+r106 | (no author) | 2013-12-14 13:09:20 +0530 (Sat, 14 Dec 2013) | 1 line
+Merged via: r125, r124, r121
+
+X-T plot and tcon module now uses Preferences settings. -- Krish
+------------------------------------------------------------------------
+r104 | (no author) | 2013-12-13 19:13:09 +0530 (Fri, 13 Dec 2013) | 4 lines
+Merged via: r125
+
+** Last revision has been tested with hardware. Minor modifications added.
+
+-- Krish
+
+------------------------------------------------------------------------
+r103 | (no author) | 2013-12-13 14:01:13 +0530 (Fri, 13 Dec 2013) | 8 lines
+Merged via: r125
+
+** Res4 modules now uses Preferences to store log and data files.
+
+** Only the latest log file is stored with name 'last_run.log'. The complete data is stored in dictionary files at the end of the run. In case, the run terminates abruptly, the lastest data is atleast available for recovery.
+
+** The data file name is formatted as YYYYMMDD_HHMMSS.xprt or xpiv depedning on the run mode.
+
+-- Krish
+
+------------------------------------------------------------------------
+r100 | (no author) | 2013-12-12 19:13:42 +0530 (Thu, 12 Dec 2013) | 4 lines
+
+** AppGlobalSettings hsa been implemented. It can set data folder and sample temperature sensors preferences.
+
+-- Krish
+
+------------------------------------------------------------------------
+r99 | (no author) | 2013-12-12 12:19:46 +0530 (Thu, 12 Dec 2013) | 1 line
+
+Preferences module as been added in apps folder. File main.py has been updated accordingly. This is a minimal implementation of Prefernces module. -- Krish
+------------------------------------------------------------------------
+r97 | (no author) | 2013-12-10 14:46:03 +0530 (Tue, 10 Dec 2013) | 1 line
+
+Devel branch DynamicConfig created. -- Krish
+------------------------------------------------------------------------
+r110 | (no author) | 2013-12-16 11:10:17 +0530 (Mon, 16 Dec 2013) | 1 line
+
+Devel branch CV_RT release candidate created -- Krish
+------------------------------------------------------------------------
+r98 | (no author) | 2013-12-11 16:00:12 +0530 (Wed, 11 Dec 2013) | 4 lines
+
+** Settings for sleep time after setting voltage and filter length for IV readings can be changed from the GUI of res2.
+** Logic of vLogRSweepT in res2 made same as of res4.
+--Nishant
+
+------------------------------------------------------------------------
+r96 | (no author) | 2013-12-10 12:17:14 +0530 (Tue, 10 Dec 2013) | 3 lines
+
+** Unnecessary buttons and fuctions removed. Check button for switching b/w time and temperature in Res2 retained for debugging purpose. Temperature should be made default after testing is complete.
+--Nishant
+
+------------------------------------------------------------------------
+r95 | (no author) | 2013-12-09 16:52:26 +0530 (Mon, 09 Dec 2013) | 3 lines
+
+** Pause/Resume of plots in res2 implemented
+--Nishant
+
+------------------------------------------------------------------------
+r94 | (no author) | 2013-12-09 14:00:10 +0530 (Mon, 09 Dec 2013) | 3 lines
+
+** R v/s Time plot implemented in res2
+--Nishant
+
+------------------------------------------------------------------------
+r93 | (no author) | 2013-12-09 12:24:10 +0530 (Mon, 09 Dec 2013) | 5 lines
+
+** Updated res2 GUI for constant voltage measurements
+** V-I plot working
+
+--Nishant
+
+------------------------------------------------------------------------
+r91 | (no author) | 2013-12-03 12:35:26 +0530 (Tue, 03 Dec 2013) | 1 line
+
+Devel branch CV_RT is merged from trunk -- Krish
+------------------------------------------------------------------------
+r86 | (no author) | 2013-11-30 11:48:10 +0530 (Sat, 30 Nov 2013) | 1 line
+
+Development branch created for constant voltage R-T experiment. -- Krish
+------------------------------------------------------------------------
+r120 | (no author) | 2013-12-18 17:35:11 +0530 (Wed, 18 Dec 2013) | 2 lines
+
+** Replaced separate Start/Stop buttons in susceptibility module to a single button --Nishant
+
+------------------------------------------------------------------------
+r119 | (no author) | 2013-12-17 16:54:30 +0530 (Tue, 17 Dec 2013) | 2 lines
+
+** reverted "*.xp* files are now stored in read only mode(0444)." --Nishant
+
+------------------------------------------------------------------------
+r118 | (no author) | 2013-12-17 16:46:28 +0530 (Tue, 17 Dec 2013) | 5 lines
+
+** *.xp* files are now stored in read only mode(0444).
+** Susceptibility module can handle unexpected disconnection of devices during runs.
+** Analyzer default directory is now determined by Preference class.
+--Nishant
+
+------------------------------------------------------------------------
+r117 | (no author) | 2013-12-16 18:26:40 +0530 (Mon, 16 Dec 2013) | 3 lines
+
+** Chi v/s F functionality implemented in the susceptibiity module
+--Nishant
+
+------------------------------------------------------------------------
+r116 | (no author) | 2013-12-16 16:06:44 +0530 (Mon, 16 Dec 2013) | 3 lines
+
+** Chi v/s F Label frame added in app_sus.py
+--Nishant
+
+------------------------------------------------------------------------
+r115 | (no author) | 2013-12-16 15:44:36 +0530 (Mon, 16 Dec 2013) | 3 lines
+
+** Chi v/s F Label frame added in app_sus.py
+--Nishant
+
+------------------------------------------------------------------------
+r113 | (no author) | 2013-12-16 13:05:22 +0530 (Mon, 16 Dec 2013) | 1 line
+
+Devel branch Chi vs freq created -- Krish
+------------------------------------------------------------------------
+r123 | (no author) | 2013-12-21 15:01:51 +0530 (Sat, 21 Dec 2013) | 1 line
+
+Reintergrate merge from devel/CV_RT_rc -- Krish
+------------------------------------------------------------------------
+r112 | (no author) | 2013-12-16 13:02:48 +0530 (Mon, 16 Dec 2013) | 1 line
+
+TODO updated -- Krish
+------------------------------------------------------------------------
+r109 | (no author) | 2013-12-14 19:44:08 +0530 (Sat, 14 Dec 2013) | 1 line
+
+ChangeLog updated -- Krish
+------------------------------------------------------------------------
+r108 | (no author) | 2013-12-14 19:42:09 +0530 (Sat, 14 Dec 2013) | 1 line
+
+Merged from devel branch DynamicConfig -- Krish
+------------------------------------------------------------------------
+r105 | (no author) | 2013-12-13 21:16:04 +0530 (Fri, 13 Dec 2013) | 1 line
+
+Merged from DynamicConfig devel branch -- Krish
+------------------------------------------------------------------------
+r102 | (no author) | 2013-12-12 19:15:55 +0530 (Thu, 12 Dec 2013) | 1 line
+
+ChangeLog updated. -- Krish
+------------------------------------------------------------------------
+r101 | (no author) | 2013-12-12 19:15:19 +0530 (Thu, 12 Dec 2013) | 1 line
+
+Merged from DynamicConfig development branch. -- Krish
+------------------------------------------------------------------------
+r89 | (no author) | 2013-12-03 12:22:36 +0530 (Tue, 03 Dec 2013) | 1 line
+
+Version number is now shown in the About window -- Krish
+------------------------------------------------------------------------
+r87 | (no author) | 2013-12-03 11:33:52 +0530 (Tue, 03 Dec 2013) | 1 line
+
+setup_home script updated -- Krish
+------------------------------------------------------------------------
+r85 | (no author) | 2013-11-30 11:46:54 +0530 (Sat, 30 Nov 2013) | 1 line
+
+TODO updated. -- Krish
+------------------------------------------------------------------------
+r84 | (no author) | 2013-11-30 11:31:48 +0530 (Sat, 30 Nov 2013) | 1 line
+
+TODO updated. -- Krish
+------------------------------------------------------------------------
+r80 | (no author) | 2013-11-27 11:08:05 +0530 (Wed, 27 Nov 2013) | 1 line
+
+Merged from devel branch sample_pt100. -- Krish
+------------------------------------------------------------------------
+r79 | (no author) | 2013-11-22 16:04:10 +0530 (Fri, 22 Nov 2013) | 6 lines
+Merged via: r80
+
+** Heater sensor, cold junction sensor, and sample temperature sensor have been respectively renamed to sensor 1, sensor 2, and sensor 3. This is required as either sensor 2 or sensor 3 can be used as sample temperature sensor.
+
+In the present implementation, sensor 2 (a Pt100) is being used as sample temperature sensor. The tcon.py module has been updated accordingly.
+
+-- Krish
+
+------------------------------------------------------------------------
+r78 | (no author) | 2013-11-22 15:31:11 +0530 (Fri, 22 Nov 2013) | 1 line
+Merged via: r80
+
+Development branch sample_pt100 created -- Krish
+------------------------------------------------------------------------
+r77 | (no author) | 2013-11-18 12:54:17 +0530 (Mon, 18 Nov 2013) | 1 line
+
+TODO moved in trunk. -- Krish
+------------------------------------------------------------------------
+r74 | (no author) | 2013-11-11 14:09:57 +0530 (Mon, 11 Nov 2013) | 1 line
+
+Trunk merged from tag Qrius-1.1.1 -- Krish
+------------------------------------------------------------------------
+r73 | (no author) | 2013-11-11 13:03:42 +0530 (Mon, 11 Nov 2013) | 4 lines
+Merged via: r74
+
+* A new folder 'docs' created in the repo.
+* Help manual - xplore.pdf and qrius_shortcuts.txt included 'docs' folder.
+* 'About Qrius' updated.
+
+------------------------------------------------------------------------
+r72 | (no author) | 2013-10-23 16:48:52 +0530 (Wed, 23 Oct 2013) | 1 line
+Merged via: r74
+
+Merge changes from trunk. -- Krish
+------------------------------------------------------------------------
+r68 | (no author) | 2013-09-28 21:22:18 +0530 (Sat, 28 Sep 2013) | 1 line
+Merged via: r74
+
+Tag renamed. -- Krish
+------------------------------------------------------------------------
+r67 | (no author) | 2013-09-28 21:19:35 +0530 (Sat, 28 Sep 2013) | 1 line
+Merged via: r74
+
+ChangeLog updated. -- Krish
+------------------------------------------------------------------------
+r66 | (no author) | 2013-09-28 21:18:17 +0530 (Sat, 28 Sep 2013) | 1 line
+Merged via: r74
+
+Merged from trunk. -- Krish
+------------------------------------------------------------------------
+r64 | (no author) | 2013-09-28 20:55:24 +0530 (Sat, 28 Sep 2013) | 11 lines
+Merged via: r74, r66
+
+** TCON communication speed changed to 9600 and parity set to none.
+
+** Three new function, namely readHeaterTemperature, read_CJ_Temperature, and readSampleTemperature, have been implemented. They read temperature directly from the hardware. This is a consequence of Pt100 and TC calibration, where all calculations need to be done on firmware, and the final results are transferred to the computer.
+
+** Time axis in temperature plot was buggy. Fixed.
+
+TODO:
+	-- Graphical calibration interface to be implemented.
+
+-- Krish
+
+------------------------------------------------------------------------
+r63 | (no author) | 2013-09-09 14:10:59 +0530 (Mon, 09 Sep 2013) | 1 line
+Merged via: r74, r66
+
+LNMIIT-1.1 folder tagged. -- Krish.
+------------------------------------------------------------------------
+r71 | (no author) | 2013-10-23 16:47:46 +0530 (Wed, 23 Oct 2013) | 1 line
+
+Earlier svn property for executable flag was incorrect. Corrected -- Krish.
+------------------------------------------------------------------------
+r70 | (no author) | 2013-10-23 16:41:22 +0530 (Wed, 23 Oct 2013) | 1 line
+
+Executable flag on main.py is pushed using svn propset. -- Krish
+------------------------------------------------------------------------
+r69 | (no author) | 2013-10-23 16:35:05 +0530 (Wed, 23 Oct 2013) | 1 line
+
+Executable flag is added to main.py. Let's see whether SVN remembers the file permission change. -- Krish
+------------------------------------------------------------------------
+r65 | (no author) | 2013-09-28 21:17:33 +0530 (Sat, 28 Sep 2013) | 1 line
+
+Merged from CURAJ. -- Krish
+------------------------------------------------------------------------
+r62 | (no author) | 2013-09-05 18:54:24 +0530 (Thu, 05 Sep 2013) | 8 lines
+
+** 2-probe I-V and R-T launch button has been commented out in app_ppsel.py.
+
+** UTF-8 coding has been specified in app_ppsel.py and app_sus.py in order to write chi and phi character directly in source code.
+
+** Compliance selection has been commented out in XSMU interface.
+
+-- Krish
+
+------------------------------------------------------------------------
+r61 | (no author) | 2013-09-02 13:28:55 +0530 (Mon, 02 Sep 2013) | 1 line
+
+ChangeLog updated. -- Krish
+------------------------------------------------------------------------
+r60 | (no author) | 2013-09-02 13:28:28 +0530 (Mon, 02 Sep 2013) | 4 lines
+
+** Callback of "Final Temperature" entry box has been disabled. The final temperature is communicated only when the ramp rate is set. This is an artifact of dual slope ramping, where the checking of whether temperature setpoint has crossed the final temperature, is dependant on the sign of ramp rate.
+
+-- Krish
+
+------------------------------------------------------------------------
+r59 | (no author) | 2013-08-31 18:38:26 +0530 (Sat, 31 Aug 2013) | 1 line
+
+ChangeLog updated. -- Krish
+------------------------------------------------------------------------
+r58 | (no author) | 2013-08-31 18:38:08 +0530 (Sat, 31 Aug 2013) | 1 line
+
+Negative temperature ramp rate can be set. -- Krish.
+------------------------------------------------------------------------
+r57 | (no author) | 2013-08-30 20:40:28 +0530 (Fri, 30 Aug 2013) | 1 line
+
+ChangeLog updated. -- Krish.
+------------------------------------------------------------------------
+r56 | (no author) | 2013-08-30 20:40:08 +0530 (Fri, 30 Aug 2013) | 18 lines
+
+** While opening lock-in amplifier control interface, the hardware is put in a default known state. The default settings are:
+
+	** Reference amplitude      : 1 V
+	** Reference freqquency     : 180 Hz
+	** Reference phase          : 0 deg.
+	** AC coupling              : OFF
+	** Pre-amp gain             : 10
+	** Post-amp gain            : 10
+	** Integrator time constant : 1 sec.
+
+** Phase values, at some places, have been wrongly twice converted to degree from radian. These have been corrected.
+
+** bCheckTimeout function in xlia.py has been renamed to comm_timedout. This is less ambiguous from the point of view of boolean return type. (bCheckTimeout() == True) is ambiguous, while (comm_timedout() == True) means the communication has timed out.
+
+** Integrator time constants have been changed to 2 ms, 5 ms, and 1 sec. in app_xlia.py.
+
+-- Krish
+
+------------------------------------------------------------------------
+r55 | (no author) | 2013-08-29 19:22:44 +0530 (Thu, 29 Aug 2013) | 1 line
+
+ChangeLog updated. -- Krish.
+------------------------------------------------------------------------
+r54 | (no author) | 2013-08-29 19:22:01 +0530 (Thu, 29 Aug 2013) | 14 lines
+
+** Thermocouple amplifier gain resistor has been changed to 120 ohm (from 27 ohm) and ADC full-scale voltage of thermocouple channel has been changed to 1024 mV. File tcon.py has been updated accordingly.
+
+** Function ascii2xprt in fileie.py has been updated. New features are:
+	-- It skips first six lines of the ascii log file in order to read the header.
+	-- It returns the filename of the newly created xprt file, which is necessary while importing the file in open menu.
+
+** Voltmeter ranges in res4.py and app_res4.py have been updated. Currently three ranges, viz. 100mV, 1V, and 10V, have been made visible to the user.
+
+** File analyzer.py has been updated to directly display imported runs (previously import used to create xprt file in the background).
+
+** It is worth mentioning that most of the modified lines in 'svn diff' are due to removal of trailing spaces.
+
+-- Krish
+
+------------------------------------------------------------------------
+r53 | (no author) | 2013-08-27 17:30:45 +0530 (Tue, 27 Aug 2013) | 1 line
+
+Found in Anurag's computer. Expected to be the latest version. -- Krish.
+------------------------------------------------------------------------
+r52 | (no author) | 2013-07-13 16:42:56 +0530 (Sat, 13 Jul 2013) | 1 line
+
+XLIA GUI updated
+------------------------------------------------------------------------
+r51 | (no author) | 2013-07-12 18:38:02 +0530 (Fri, 12 Jul 2013) | 1 line
+
+XLIA GUI updated
+------------------------------------------------------------------------
+r50 | (no author) | 2013-07-11 15:26:33 +0530 (Thu, 11 Jul 2013) | 1 line
+
+XLIA module updated using methods in the new driver
+------------------------------------------------------------------------
+r49 | (no author) | 2013-05-23 17:58:25 +0530 (Thu, 23 May 2013) | 1 line
+
+XSMU module updated with libxsmu library functions
+------------------------------------------------------------------------
+r48 | (no author) | 2013-05-23 17:44:54 +0530 (Thu, 23 May 2013) | 1 line
+
+XSMU module updated with libxsmu library functions
+------------------------------------------------------------------------
+r47 | (no author) | 2013-05-23 17:11:11 +0530 (Thu, 23 May 2013) | 1 line
+
+Calibration GUIs updated. In voltage measure calibration module, range selection will now automatically adjust the voltage source range
+------------------------------------------------------------------------
+r46 | (no author) | 2013-05-23 15:17:24 +0530 (Thu, 23 May 2013) | 1 line
+
+Voltage Measure range selection modified in Calibration Module
+------------------------------------------------------------------------
+r45 | (no author) | 2013-05-23 14:17:56 +0530 (Thu, 23 May 2013) | 1 line
+
+Faulty Range selection corrected in Voltage Measure Calibration and added support for future modifications
+------------------------------------------------------------------------
+r44 | (no author) | 2013-05-23 12:49:03 +0530 (Thu, 23 May 2013) | 1 line
+
+Faulty Range selection corrected in Voltage Measure Calibration
+------------------------------------------------------------------------
+r43 | (no author) | 2013-05-23 12:37:34 +0530 (Thu, 23 May 2013) | 1 line
+
+Calibration GUIs updated and Calibration testing feature modified
+------------------------------------------------------------------------
+r42 | (no author) | 2013-05-22 16:35:05 +0530 (Wed, 22 May 2013) | 1 line
+
+Calibration GUIs updated
+------------------------------------------------------------------------
+r41 | (no author) | 2013-05-21 19:29:34 +0530 (Tue, 21 May 2013) | 1 line
+
+Bug fixed in all four calibration GUIs
+------------------------------------------------------------------------
+r40 | (no author) | 2013-05-21 18:30:48 +0530 (Tue, 21 May 2013) | 1 line
+
+All four calibration GUIs updated
+------------------------------------------------------------------------
+r39 | (no author) | 2013-05-21 17:04:40 +0530 (Tue, 21 May 2013) | 1 line
+
+Minor bug fixed in menubar.py
+------------------------------------------------------------------------
+r38 | (no author) | 2013-05-21 16:58:30 +0530 (Tue, 21 May 2013) | 1 line
+
+I and V Measurement calibration modules are now accessible from utilities menu
+------------------------------------------------------------------------
+r37 | (no author) | 2013-05-21 16:16:40 +0530 (Tue, 21 May 2013) | 1 line
+
+Bug fixed in Voltage Source calibration GUI. Voltage Measure calibration GUI added
+------------------------------------------------------------------------
+r36 | (no author) | 2013-05-21 14:07:45 +0530 (Tue, 21 May 2013) | 1 line
+
+Current Measure calibration GUI updated
+------------------------------------------------------------------------
+r35 | (no author) | 2013-05-21 14:06:18 +0530 (Tue, 21 May 2013) | 1 line
+
+Bug fixed in Current Measure calibration GUI
+------------------------------------------------------------------------
+r34 | (no author) | 2013-05-21 13:47:12 +0530 (Tue, 21 May 2013) | 1 line
+
+Current Measure calibration GUI added
+------------------------------------------------------------------------
+r33 | (no author) | 2013-05-21 12:42:01 +0530 (Tue, 21 May 2013) | 1 line
+
+Minor changes made to Voltage Source calibration GUI
+------------------------------------------------------------------------
+r32 | (no author) | 2013-05-21 12:29:41 +0530 (Tue, 21 May 2013) | 1 line
+
+Minor bugs fixed in Source calibration GUI
+------------------------------------------------------------------------
+r31 | (no author) | 2013-05-21 12:10:13 +0530 (Tue, 21 May 2013) | 1 line
+
+Source calibration GUI updated for both current and voltage
+------------------------------------------------------------------------
+r30 | (no author) | 2013-05-20 18:10:46 +0530 (Mon, 20 May 2013) | 1 line
+
+Calibration menu updated
+------------------------------------------------------------------------
+r29 | (no author) | 2013-05-20 18:04:19 +0530 (Mon, 20 May 2013) | 1 line
+
+Calibration GUI added to main window under utilities
+------------------------------------------------------------------------
+r28 | (no author) | 2013-05-20 16:37:09 +0530 (Mon, 20 May 2013) | 1 line
+
+Source calibration classes updated
+------------------------------------------------------------------------
+r27 | (no author) | 2013-05-20 16:32:50 +0530 (Mon, 20 May 2013) | 1 line
+
+Voltage source calibration GUI added
+------------------------------------------------------------------------
+r26 | (no author) | 2013-05-20 11:35:06 +0530 (Mon, 20 May 2013) | 1 line
+
+Confirmation message box added in CS Calibration GUI
+------------------------------------------------------------------------
+r25 | (no author) | 2013-05-18 17:49:12 +0530 (Sat, 18 May 2013) | 1 line
+
+Bug fixed in Current Source Calibration GUI
+------------------------------------------------------------------------
+r24 | (no author) | 2013-05-18 12:54:59 +0530 (Sat, 18 May 2013) | 1 line
+
+Current Source Calibration GUI updated
+------------------------------------------------------------------------
+r23 | (no author) | 2013-05-11 17:21:29 +0530 (Sat, 11 May 2013) | 3 lines
+
+* Added update user manual
+* Calibration GUI first draft added
+
+------------------------------------------------------------------------
+r22 | (no author) | 2013-05-04 14:28:59 +0530 (Sat, 04 May 2013) | 1 line
+
+Units added in the data file
+------------------------------------------------------------------------
+r21 | (no author) | 2013-05-03 16:50:31 +0530 (Fri, 03 May 2013) | 1 line
+
+Standard gd RT and susceptance data files added to the respository
+------------------------------------------------------------------------
+r20 | (no author) | 2013-05-03 16:41:04 +0530 (Fri, 03 May 2013) | 1 line
+
+Module and PPSel interfaces open up even when not found...
+------------------------------------------------------------------------
+r19 | (no author) | 2013-04-20 16:03:27 +0530 (Sat, 20 Apr 2013) | 1 line
+
+Plot begins when minimum two points are obtained, thereby pylab single point plotting error averted
+------------------------------------------------------------------------
+r18 | (no author) | 2013-04-20 15:56:11 +0530 (Sat, 20 Apr 2013) | 1 line
+
+Divide by Zero check in resistance measurement added...
+------------------------------------------------------------------------
+r17 | (no author) | 2013-04-20 15:31:20 +0530 (Sat, 20 Apr 2013) | 1 line
+
+XLIA GUI updated.
+------------------------------------------------------------------------
+r16 | (no author) | 2013-04-20 15:25:09 +0530 (Sat, 20 Apr 2013) | 1 line
+
+ChangeLog updated.
+------------------------------------------------------------------------
+r15 | (no author) | 2013-04-20 15:24:45 +0530 (Sat, 20 Apr 2013) | 1 line
+
+Susceptibility GUI updated.
+------------------------------------------------------------------------
+r14 | (no author) | 2013-04-20 14:50:29 +0530 (Sat, 20 Apr 2013) | 1 line
+
+sample.log file added in log folder
+------------------------------------------------------------------------
+r13 | (no author) | 2013-04-20 14:47:48 +0530 (Sat, 20 Apr 2013) | 4 lines
+
+* Sample Details module backend added
+* Susceptibity window X' and X'' changed by X and phi respectively
+
+
+------------------------------------------------------------------------
+r12 | (no author) | 2013-04-20 12:08:57 +0530 (Sat, 20 Apr 2013) | 1 line
+
+Temperature compensation for K-type thermocouple reworked - first add compensated voltage and then convert it back to temp.
+------------------------------------------------------------------------
+r11 | (no author) | 2013-04-17 18:21:14 +0530 (Wed, 17 Apr 2013) | 1 line
+
+Stop ramp when sample temperature crosses final set temp., read set temp. bug fixed...
+------------------------------------------------------------------------
+r10 | (no author) | 2013-04-17 18:04:36 +0530 (Wed, 17 Apr 2013) | 1 line
+
+Update set temperature on TCON GUI during temp. ramps...
+------------------------------------------------------------------------
+r9 | (no author) | 2013-04-17 17:22:50 +0530 (Wed, 17 Apr 2013) | 1 line
+
+Update Ramp parameters on the fly...
+------------------------------------------------------------------------
+r8 | (no author) | 2013-04-16 18:09:29 +0530 (Tue, 16 Apr 2013) | 1 line
+
+Undetected modules reported as errors...
+------------------------------------------------------------------------
+r7 | (no author) | 2013-04-16 13:54:01 +0530 (Tue, 16 Apr 2013) | 1 line
+
+Susceptibity Temperature interface included...
+------------------------------------------------------------------------
+r6 | (no author) | 2013-04-15 11:51:07 +0530 (Mon, 15 Apr 2013) | 1 line
+
+Four probe link made to new core functions
+------------------------------------------------------------------------
+r5 | (no author) | 2013-04-05 16:13:01 +0530 (Fri, 05 Apr 2013) | 1 line
+
+Unicode chi added in Chi-T frontend
+------------------------------------------------------------------------
+r4 | (no author) | 2013-04-05 15:44:48 +0530 (Fri, 05 Apr 2013) | 1 line
+
+xlia bug fixes...
+------------------------------------------------------------------------
+r3 | (no author) | 2013-04-05 14:09:58 +0530 (Fri, 05 Apr 2013) | 1 line
+
+libxlia interface activated and tested.
+------------------------------------------------------------------------
+r2 | (no author) | 2013-04-05 12:50:12 +0530 (Fri, 05 Apr 2013) | 1 line
+
+Trunk created. Old folders have been moved into trunk.
+------------------------------------------------------------------------

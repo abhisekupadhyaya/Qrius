@@ -1,0 +1,4 @@
+** python-matplotlib*
+** numpy
+** python-pillow*
+** pyserial
