@@ -1209,7 +1209,7 @@ class _XSMU:
 			currentStep  = 1e-3,
 			voltageStep  = 1.0,
 			bipolar      = True,
-			resTrackMode = R_TRACK_dV_dI)
+			resTrackMode = R_TRACK_V_I)
 
 		self.ohmmeterSettings = OhmmeterSettings (
 			maxCurrent   = 10e-3,
@@ -1395,7 +1395,7 @@ class _XSMU:
 
 		else: raise ValueError (context)
 
-	# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	# ++++++++++++++++++++++++++++++++++++++++'NoneType+++++++++++++++++++
 
 	def startRun (self, mode):
 
@@ -3239,7 +3239,66 @@ class _IVTimeResolvedModule (_Module):
 		
     	def keepSameExcitation (self, breakPlot):
     
-        	return breakPlot
+        	oXSMU = self.oXSMU
+
+		if (self.excitationCurrent == None
+		or  self.excitationVoltage == None):
+
+			self.excitationCurrent = 0.0
+			self.excitationVoltage = 0.0
+			self.power_limited     = False
+
+		elif (not self.power_limited
+		and abs (self.excitationCurrent) < self.finalCurrent
+		and abs (self.excitationVoltage) < self.finalVoltage):
+
+				# Estimating next current
+
+				if oXSMU.sourceParameters.mode == SOURCE_MODE_CS:
+					nextCurrent = (
+						oXSMU.sourceParameters.value())
+
+				else:
+					nextCurrent = (
+						self.dataset[-1].current)
+
+				try:
+					self.excitationCurrent = self.currentStep * round (
+						nextCurrent / self.currentStep)
+
+				except ZeroDivisionError:
+					self.excitationCurrent = nextCurrent
+
+				# Estimating next voltage
+
+				if oXSMU.sourceParameters.mode == SOURCE_MODE_VS:
+					nextVoltage = (
+						oXSMU.sourceParameters.value())
+
+				else:
+					nextVoltage = (
+						self.dataset[-1].vsrc)
+
+				try:
+					self.excitationVoltage = self.voltageStep * round (
+						nextVoltage / self.voltageStep)
+
+				except ZeroDivisionError:
+					self.excitationVoltage = nextVoltage
+
+		else:
+			self.excitationCurrent = None
+			self.excitationVoltage = None
+
+			if self.bipolar:
+				breakPlot      = DO_BREAKPLOT
+				self.scan_mode = SCAN_MODE_NEGATIVE
+
+			else:
+				self.scan_mode = None
+				self._complete = True
+
+		return breakPlot
         
 	def applyNextExcitation (self):
 
