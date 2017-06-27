@@ -3159,8 +3159,8 @@ class _IVTimeResolvedModule (_Module):
 		self.do_tasks (bg_task, *bg_tasks)
 
 		try:
-
-			breakPlot = self.applyNextExcitation()
+            
+			breakPlot = self.applySameExcitation()
 			if breakPlot: self.breakPlot()
 
 			if not self.complete():
@@ -3190,6 +3190,57 @@ class _IVTimeResolvedModule (_Module):
 
 		return datapoint, breakPlot
 
+    def applySameExcitation (self):
+        
+    	oXSMU = self.oXSMU
+
+		'''
+			Find excitation
+		'''
+
+		breakPlot = NO_BREAKPLOT
+
+		if self.scan_mode == None:
+			self.scan_mode = SCAN_MODE_POSITIVE
+
+		if self.scan_mode == SCAN_MODE_POSITIVE:
+			breakPlot = self.keepSameExcitation (breakPlot)
+
+		if self.scan_mode == SCAN_MODE_NEGATIVE:
+			breakPlot = self.keepSameExcitation (breakPlot)
+
+		if not self.complete():
+
+			try:
+				oXSMU.acquire_lock()
+
+				current = (
+					self.excitationCurrent if self.currentStep != 0.0
+					else copysign (self.finalCurrent, self.excitationVoltage))
+
+				voltage = (
+					self.excitationVoltage if self.voltageStep != 0.0
+					else copysign (self.finalVoltage, self.excitationCurrent))
+
+				if current == 0.0 or voltage == 0.0:
+					oXSMU.output_off()
+
+				else:
+					oXSMU.setExcitationLimits (current, voltage, self.maxPower)
+
+					(src_mode, value, self.power_limited) = (
+						oXSMU.doExcitationAutoTune (
+							track_mode = self.resTrackMode))
+
+			finally:
+				oXSMU.release_lock()
+
+		return breakPlot
+		
+    def keepSameExcitation (self, breakPlot):
+    
+        return breakPlot
+        
 	def applyNextExcitation (self):
 
 		oXSMU = self.oXSMU
@@ -3236,7 +3287,7 @@ class _IVTimeResolvedModule (_Module):
 				oXSMU.release_lock()
 
 		return breakPlot
-
+        
 	def findNextPositiveExcitation (self, breakPlot):
 
 		oXSMU = self.oXSMU
