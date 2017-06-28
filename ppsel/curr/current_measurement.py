@@ -7,6 +7,7 @@ sys.path.insert(0,"../../lib")
 
 import math
 import xsmu
+import csv
 from XSMU_Constants import *
 
 # Set voltage source to some value
@@ -24,10 +25,11 @@ def set_DC_voltage (xsmu_driver, value):
 
 def measure_current(xsmu_driver):
     
-    for index in range(10):
+    filename = open("histogram_data.txt", "w")
+    for index in range(10000):
         current = xsmu_driver.CM_getReading(filterLength = 1)
-        print ("The value of current is " + str(current) + " and the time is " + str(time.strftime('%H:%M:%S')) + '\n') 	
-   
+        filename.write(str(current) + "," + str(time.strftime('%H:%M:%S')) + "\n")
+    filename.close()
 	
 def main():
 	
