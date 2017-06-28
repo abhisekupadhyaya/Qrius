@@ -24,6 +24,7 @@ from Tkinter        import Toplevel
 from math           import copysign, sqrt
 
 from XSMU_Constants import *
+INDEX = 0
 
 def Driver():
 
@@ -464,6 +465,7 @@ class _Driver:
 		(current, timeout) = \
 			libxsmu.CM_getReading (self.deviceID, filterLength, timeout)
 
+		print filterLength
 		self.check_timeout (timeout, 'Get ammeter reading')
 		return current
 
@@ -3190,7 +3192,7 @@ class _IVTimeResolvedModule (_Module):
 
 		return datapoint, breakPlot
 
-    	def applySameExcitation (self):
+	def applySameExcitation (self):
         
     		oXSMU = self.oXSMU
 
@@ -3237,7 +3239,7 @@ class _IVTimeResolvedModule (_Module):
 
 		return breakPlot
 		
-    	def keepSameExcitation (self, breakPlot):
+	def keepSameExcitation (self, breakPlot):
     
         	oXSMU = self.oXSMU
 
