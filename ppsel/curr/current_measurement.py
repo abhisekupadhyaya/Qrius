@@ -20,13 +20,13 @@ def set_DC_voltage (xsmu_driver, value):
 	autorange  = AUTORANGE_ON
 	range      = VS_RANGE_10V
 	
-	xsmu_driver.setSourceParameters (mode, autorange, range, values)
+	xsmu_driver.setSourceParameters (mode, autorange, range, value)
 
-def measure_current():
+def measure_current(xsmu_driver):
     
-    for index in range(100):
-        current = CM_getReading()
-        print ("The value of current is " + current + " and the time is " + time.strftime('%H:%M:%S') + '\n') 	
+    for index in range(10):
+        current = xsmu_driver.CM_getReading(filterLength = 1)
+        print ("The value of current is " + str(current) + " and the time is " + str(time.strftime('%H:%M:%S')) + '\n') 	
    
 	
 def main():
@@ -38,8 +38,11 @@ def main():
 	DC_amplitude   = float(raw_input ("Enter DC Voltage (V) : "))    # V
 	
 	set_DC_voltage (xsmu_driver, DC_amplitude)
-	measure_current()
+	measure_current(xsmu_driver)
 
+	raw_input ("Press enter after observing signals")
+	
+	set_DC_voltage (xsmu_driver, 0.0)
 	xsmu_driver.close()
 
 main()
