@@ -23,32 +23,34 @@ def set_DC_voltage (xsmu_driver, value):
 	autorange  = AUTORANGE_ON
 	range      = VS_RANGE_10V
 	
-	xsmu_driver.setSourceParameters (mode, autorange, range, values)
+	xsmu_driver.setSourceParameters (mode, autorange, range, value)
 
 def measure_current(xsmu_driver):
     
-    for index in range(100):
-        current = xsmu_driver.CM_getReading()
-        print ("The value of current is " + current + " and the time is " + time.strftime('%H:%M:%S') + '\n') 	
+    for index in range(10):
+        current = xsmu_driver.CM_getReading( filterLength = 1 )
+        print ("The value of current is " + str(current) + " and the time is " + str(time.strftime('%H:%M:%S')) + '\n') 	
    
 def stabilize_temp (xtcon_driver, tolerance):
     
-    sample_temperature = xtcon_driver.getSampleTemperature()
     history = []
     
     print ("Stabilizing .. \n")
     
     while True :
-        history.append(sample_temperature)
+        print ("Loop entered")
+        history.append(xtcon_driver.getSampleTemperature())
         
-        if (len(history)<10):
+        if (len(history)<100):
             continue
         else :
-            fluctuation = max(history[-10:-1]) - min(history[-10:-1])
-        
-        if (np.abs(fluctuation) < tolerance):
-            print ("Stable ..\n")
-            break
+            fluctuation = max(history[-100:-1]) - min(history[-100:-1])
+            print ("Max : ", max(history[-100:-1]), "\tMin : ", min(history[-100:-1]))
+            
+            if (np.abs(fluctuation) < tolerance):
+                print ("Fluctuation : " + str(fluctuation))
+                print ("Stable ..\n")
+                break
         
         
 
@@ -60,8 +62,12 @@ def main():
 	xsmu_devices = xsmu_driver.scan()
 	xsmu_driver.open(xsmu_devices[0])
 	
+	xtcon_devices = xtcon_driver.scan()
+	xtcon_driver.open(xtcon_devices[0])
+	
 	DC_amplitude   = float(raw_input ("Enter DC Voltage (V) : "))    # V
 	setpoint       = float(raw_input ("Enter isothermal setpoint (K) :"))
+	tolerance      = float(raw_input ("Tempereature Tolerance (over 10 successive readings) (K) : "))
 	
 	xtcon_driver.setIsothermalSetpoint (setpoint)
 	print ("Starting Isothermal Run.. \n")
@@ -71,11 +77,12 @@ def main():
 	
 	print ("Setting DC Voltage.. \n")
 	set_DC_voltage (xsmu_driver, DC_amplitude)
-	measure_current()
+	measure_current(xsmu_driver)
 	
 	xtcon_driver.stopIsothermalControl()
 	set_DC_voltage (xsmu_driver, 0.0)
-	xlia_driver.close()
-	xsmu_driver.close()
+	
+	xtcon_driver.close()
+        xsmu_driver.close()
 
 main()
