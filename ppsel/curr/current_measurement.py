@@ -33,6 +33,9 @@ import xsmu
 import csv
 from XSMU_Constants import *
 
+filename = open("histogram_data.txt", "w")
+filename.close ()
+
 def set_DC_voltage (xsmu_driver, value):
 
 															#	mode       = SOURCE_MODE_VS
@@ -50,7 +53,7 @@ def set_DC_current (xsmu_driver, value):
 
 def measure_IV (xsmu_driver, iteration):
     
-    filename = open("histogram_data.txt", "w")
+    filename = open("histogram_data.txt", "a")
     
     for index in range(iteration):
         current         = xsmu_driver.CM_getReading(filterLength = 1)
@@ -72,7 +75,7 @@ def main():
 	voltage                = 0.0
 	
 	while (voltage <= DC_Voltage_Amplitude):
-		set_DC_voltage (xsmu_driver, DC_amplitude)
+		set_DC_voltage (xsmu_driver, voltage)
 		measure_IV     (xsmu_driver,    iteration)
 		voltage            = voltage + DC_Voltage_StepSize
 
