@@ -169,7 +169,7 @@ class _Driver:
 
 		self.check_timeout (timeout, 'Set current')
 		self.cs_value = value
-		return value
+		return set_value
 
 	def _VS_setVoltage (self, value):
 
@@ -180,7 +180,7 @@ class _Driver:
 
 		self.check_timeout (timeout, 'Set voltage')
 		self.vs_value = value
-		return value
+		return set_value
 
 	def _CM_setRange (self, range):
 
