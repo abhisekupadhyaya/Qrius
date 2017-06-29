@@ -34,6 +34,7 @@ sys.path.insert(0,"../../lib")
 import xsmu
 import csv
 import numpy as np
+import multiprocessing as mp
 from XSMU_Constants import *
 
 filename = open("histogram_data.txt", "w")
@@ -41,33 +42,34 @@ filename.close ()
 
 def set_DC_voltage (xsmu_driver, value):
 
-															#	mode       = SOURCE_MODE_VS
-	xsmu_driver._VS_setVoltage(value)						#	autorange  = AUTORANGE_ON
-															#	range      = VS_RANGE_10V	
-															#	xsmu_driver.setSourceParameters (mode, autorange, range, value)
+								#	mode       = SOURCE_MODE_VS
+	xsmu_driver._VS_setVoltage(value)			#	autorange  = AUTORANGE_ON
+								#	range      = VS_RANGE_10V	
+								#	xsmu_driver.setSourceParameters (mode, autorange, range, value)
 
 def set_DC_current (xsmu_driver, value):
 
-															#	mode       = SOURCE_MODE_CS
-															#   autorange  = AUTORANGE_ON
-	xsmu_driver._CS_setCurrent(value)						#	range      = VS_RANGE_10V	
-															#	xsmu_driver.setSourceParameters (mode, autorange, range, value)
+								#	mode       = SOURCE_MODE_CS
+								#   autorange  = AUTORANGE_ON
+    xsmu_driver._CS_setCurrent(value)
+    xsmu_driver._CM_setRange(CM_RANGE_MAX)			#	range      = VS_RANGE_10V	
+								#	xsmu_driver.setSourceParameters (mode, autorange, range, value)
 	
 
 def measure_IV (xsmu_driver, iteration, mode):
     
     filename = open("histogram_data.txt", "a")
-    
     for index in range(iteration):
         current         = xsmu_driver.CM_getReading  (filterLength = 1)
-        voltage         = xsmu_driver.VM_getReading (filterLength = 1)
+        voltage         = xsmu_driver.VM_getReading  (filterLength = 1)
         filename.write                               (str(voltage) + "," + str(current) + "," + str(time.time()) + "," + mode + "\n")
     
     
     filename.write ('Next Source Value\n')
     filename.close ()
-
+    print current, voltage
     return current, voltage
+
 
 
 def setMode (xsmu_driver, voltage, current, voltage_step_size, current_step_size, mode):
@@ -76,22 +78,22 @@ def setMode (xsmu_driver, voltage, current, voltage_step_size, current_step_size
     
 	    set_DC_voltage (xsmu_driver, voltage + voltage_step_size)
 	    current_new            = xsmu_driver.CM_getReading  (filterLength = 1)
-	    
-	    if (np.abs(current_new - current) > current_step_size):
-	        set_DC_current (xsmu_driver, current + current_step_size)
-	        return "CURRENT", (current + current_step_size)
+	    set_DC_voltage (xsmu_driver, voltage)
+	    if (np.abs(current_new - current) >= current_step_size):
+	        xsmu_driver._setSourceMode(SOURCE_MODE_CS)
+	        return "CURRENT"
 	    else:
-        	return "VOLTAGE", (voltage + voltage_step_size)
+        	return "VOLTAGE"
             
     else :
 		set_DC_current (xsmu_driver, current + current_step_size)
 		voltage_new            = xsmu_driver.VM_getReading  (filterLength = 1)
-	    
-		if (np.abs(voltage_new - voltage) > voltage_step_size):
-			set_DC_voltage (xsmu_driver, voltage + voltage_step_size)
-			return "VOLTAGE", (voltage + voltage_step_size)
+		set_DC_current (xsmu_driver, current)
+		if (np.abs(voltage_new - voltage) >= voltage_step_size):
+			xsmu_driver._setSourceMode(SOURCE_MODE_VS)
+			return "VOLTAGE"
 		else:
-			return "CURRENT", (current + current_step_size)
+			return "CURRENT"
 	
     
 def main():
@@ -111,12 +113,22 @@ def main():
 	set_DC_voltage                  (xsmu_driver, voltage)
 	
 	while ((voltage <= DC_Voltage_Amplitude) and (current <= DC_Current_Amplitude)):
-		current, voltage   = measure_IV (xsmu_driver,    iteration, mode)
-		mode, value        = setMode    (xsmu_driver, voltage, current, DC_Voltage_StepSize, DC_Current_StepSize, mode) 
 		if (mode == "VOLTAGE"):
-		    voltage = value
+			set_DC_voltage (xsmu_driver, voltage)
+			current,voltage        = measure_IV (xsmu_driver,    iteration, mode)
+			mode                   = setMode    (xsmu_driver, voltage, current, DC_Voltage_StepSize, DC_Current_StepSize, mode)
+			if (mode == "VOLTAGE"):
+				voltage = voltage + DC_Voltage_StepSize
+			else:
+				current = current + DC_Current_StepSize
 		else :
-		    current = value
+			set_DC_current (xsmu_driver, current)
+			current,voltage        = measure_IV (xsmu_driver,    iteration, mode)
+			mode                   = setMode    (xsmu_driver, voltage, current, DC_Voltage_StepSize, DC_Current_StepSize, mode) 
+			if (mode == "VOLTAGE"):
+				voltage = voltage + DC_Voltage_StepSize
+			else:
+				current = current + DC_Current_StepSize
 		print mode   
 
 	raw_input ("Press enter after observing signals")
