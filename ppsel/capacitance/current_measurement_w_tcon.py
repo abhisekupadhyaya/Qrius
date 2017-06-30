@@ -83,7 +83,7 @@ def main():
 	xsmu_devices = xsmu_driver.scan()
 	xsmu_driver.open(xsmu_devices[0])
 	
-	for i in range(5):
+	for i in range(1):
 	
             DC_amplitude   = float(raw_input ("Enter DC Voltage (V) : "))    # V
             iterations     = int  (raw_input ("Iterations : "))
