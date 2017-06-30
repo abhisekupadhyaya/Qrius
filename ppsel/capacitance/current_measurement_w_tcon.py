@@ -73,7 +73,7 @@ def main():
 	
 	stabilize_temp (xtcon_driver, tolerance)
 	# Stabilizes the temperature and waits for user to take an IV run from Qrius GUI
-	print ("Press Enter when IV from Qrius GUI is complete")
+	raw_input ("Press Enter when IV from Qrius GUI is complete")
 	
 	response = raw_input("Press y to continue? : y \n")
 	while (response != 'y'):
@@ -83,10 +83,12 @@ def main():
 	xsmu_devices = xsmu_driver.scan()
 	xsmu_driver.open(xsmu_devices[0])
 	
-	for i in range(1):
+	Amplitudes = [0.5, 0.69, 0.74]
 	
-            DC_amplitude   = float(raw_input ("Enter DC Voltage (V) : "))    # V
-            iterations     = int  (raw_input ("Iterations : "))
+	for i in range(len(Amplitudes)):
+	
+            DC_amplitude   = Amplitudes[i]    # V
+            iterations     = int  (10)
 	
             print ("Setting DC Voltage.. \n")
 	
