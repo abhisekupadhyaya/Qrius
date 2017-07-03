@@ -1,10 +1,10 @@
 import sys, time
 
-sys.path.insert(0,"../../modules/xsmu")
-sys.path.insert(0,"../../modules/xtcon")
-sys.path.insert(0,"../../apps")
-sys.path.insert(0,"../../apps/widgets")
-sys.path.insert(0,"../../lib")
+sys.path.insert(0,"../modules/xsmu")
+sys.path.insert(0,"../modules/xtcon")
+sys.path.insert(0,"../apps")
+sys.path.insert(0,"../apps/widgets")
+sys.path.insert(0,"../lib")
 
 import xsmu
 import tcon
