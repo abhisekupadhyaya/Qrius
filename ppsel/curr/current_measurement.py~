@@ -1,0 +1,37 @@
+import sys, time
+
+sys.path.insert(0,"../../modules/xlia")
+sys.path.insert(0,"../../apps")
+sys.path.insert(0,"../../apps/widgets")
+sys.path.insert(0,"../../lib")
+
+import math
+import xsmu
+from XSMU_Constants import *
+
+# Set voltage source to some value
+# Call function to measure current
+# Loop over the measuring function
+# Print out the current values
+
+def set_DC_voltage (xsmu_driver, value):
+
+	mode       = SOURCE_MODE_VS
+	autorange  = AUTORANGE_ON
+	range      = VS_RANGE_10V
+	
+	xsmu_driver.setSourceParameters (mode, autorange, range, values)
+
+def measure_current():
+    
+    for index in range(100):
+        current = CM_getReading()
+        print ("The value of current is " + current + " and the time is " + time.strftime('%H:%M:%S') + '\n') 	
+   
+	
+mode    = _setSourceMode(RUN_MODE_VS)
+voltage = _VS_setVoltage(10)
+current = CM_getReading(1)
+
+set_DC_voltage(
+# Print out the current values
