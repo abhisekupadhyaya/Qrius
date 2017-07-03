@@ -83,12 +83,15 @@ def main():
 	xsmu_devices = xsmu_driver.scan()
 	xsmu_driver.open(xsmu_devices[0])
 	
-	Amplitudes = [0.5, 0.69, 0.74]
+	Amplitudes = [0.5]
+	time_stamps = []
 	
 	for i in range(len(Amplitudes)):
-	
+            
+            time_stamps.append(time.time())
+            
             DC_amplitude   = Amplitudes[i]    # V
-            iterations     = int  (10)
+            iterations     = int(raw_input("Enter Number of iterations : "))
 	
             print ("Setting DC Voltage.. \n")
 	
@@ -97,6 +100,13 @@ def main():
 	
 	xtcon_driver.stopIsothermalControl()
 	set_DC_voltage (xsmu_driver, 0.0)
+	
+        filename = open("TimeStamps.txt", "w")
+        
+        for item in time_stamps:
+            filename.write(str(item) + "\n")
+        
+        filename.close()
 	
 	xtcon_driver.close()
         xsmu_driver.close()
