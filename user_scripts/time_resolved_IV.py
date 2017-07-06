@@ -31,7 +31,7 @@ def measure_current(xsmu_driver, xtcon_driver, iterations):
     
     f = open("I-Data.txt", "a")
     for index in range(iterations):
-        current = xsmu_driver.CM_getReading( filterLength = 1 )
+        current     = xsmu_driver .CM_getReading( filterLength = 1 )
         temperature = xtcon_driver.getSampleTemperature()
         f.write(str(current) + "," + str(temperature) + '\n')
     f.close() 	
@@ -60,7 +60,7 @@ def stabilize_temp (xtcon_driver, tolerance):
 
 def main():
 	
-	xtcon_driver = tcon.Driver()
+	xtcon_driver  = tcon.Driver()
         xtcon_devices = xtcon_driver.scan()
 	xtcon_driver.open(xtcon_devices[0])
 	
@@ -79,7 +79,7 @@ def main():
 	while (response != 'y'):
             response = raw_input("Press y to continue? : y/n \n")
 
-	xsmu_driver = xsmu.Driver()
+	xsmu_driver  = xsmu.Driver()
 	xsmu_devices = xsmu_driver.scan()
 	xsmu_driver.open(xsmu_devices[0])
 	
@@ -105,7 +105,7 @@ def main():
         
         for item in time_stamps:
             filename.write(str(item) + "\n")
-        
+      
         filename.close()
 	
 	xtcon_driver.close()
