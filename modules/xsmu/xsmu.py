@@ -447,21 +447,15 @@ class _Driver:
 
 	def CM_getReading (self, filterLength = 128):
 	
-                t_1 = time.time()
-		self.check_connected()
-		t_2 = time.time() - t_1
-		
-                print ("The time taken for check_connected() is " + str(t_2))
                 
-                t_3 = time.time()
+		self.check_connected()
+                
+                
 		if self.src_mode != SOURCE_MODE_CS and self.cm_autorange:
 			range = self._CM_doAutoRange()
 			self.do_callback (CM_RANGE_CHANGED, self.cm_autorange, range)
 		
-		t_4 = time.time() - t_3
-		print ("The time taken for setting the range (i.e or checking for autorange) is " + str(t_4))
 		
-		t_5 = time.time()
 		timeout = COMM_TIMEOUT_INTERVAL
 
 		if (libxsmu.firmware_version (self.deviceID)
@@ -472,18 +466,11 @@ class _Driver:
 		else:
 			timeout += filterLength * 0.01
 			
-		t_6 = time.time() - t_5
-		print ("The time taken for settings timeout duration is " + str(t_6))
 		
-		t_7 = time.time()
 		(current, timeout) = \
 			libxsmu.CM_getReading (self.deviceID, filterLength, timeout)
-		t_8 = time.time() - t_7
-		print ("The time taken for current measurement is " + str(t_8))
-		t_9  = time.time()
+		
 		self.check_timeout (timeout, 'Get ammeter reading')
-		t_10 = time.time() - t_9
-		print ("The time taken for check_timeout is " + str(t_10))
 		
 		return current
 
