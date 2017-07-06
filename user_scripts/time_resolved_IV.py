@@ -80,8 +80,7 @@ def main():
             response = raw_input("Press y to continue? : y/n \n")
 
 	xsmu_driver  = xsmu.Driver()
-	xsmu_devices = xsmu_driver.scan()
-	xsmu_driver.open(xsmu_devices[0])
+	xsmu_driver.open("XSMU012A")
 	
 	Amplitudes = [0.5]
 	time_stamps = []
