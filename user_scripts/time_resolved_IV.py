@@ -82,7 +82,7 @@ def main():
 	xsmu_driver  = xsmu.Driver()
 	xsmu_driver.open("XSMU012A")
 	
-	Amplitudes = [0.5]
+	Amplitudes = [0.3, 3, 10]
 	time_stamps = []
 	
 	for i in range(len(Amplitudes)):
