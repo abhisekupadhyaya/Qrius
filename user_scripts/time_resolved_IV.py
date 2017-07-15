@@ -45,11 +45,11 @@ def stabilize_temp (xtcon_driver, tolerance):
     while True :
         history.append(xtcon_driver.getSampleTemperature())
         
-        if (len(history)<100):
+        if (len(history)<200):
             continue
         else :
-            fluctuation = max(history[-100:-1]) - min(history[-100:-1])
-            print "Max : " + str (max(history[-100:-1])) + "\tMin : " + str(min(history[-100:-1]))
+            fluctuation = max(history[-200:-1]) - min(history[-200:-1])
+            print "Max : " + str (max(history[-200:-1])) + "\tMin : " + str(min(history[-200:-1]))
             
             if (np.abs(fluctuation) < tolerance):
                 print ("Fluctuation : " + str(fluctuation))
@@ -73,16 +73,16 @@ def main():
 	
 	stabilize_temp (xtcon_driver, tolerance)
 	# Stabilizes the temperature and waits for user to take an IV run from Qrius GUI
-	raw_input ("Press Enter when IV from Qrius GUI is complete")
+	#raw_input ("Press Enter when IV from Qrius GUI is complete")
 	
-	response = raw_input("Press y to continue? : y \n")
-	while (response != 'y'):
-            response = raw_input("Press y to continue? : y/n \n")
+	#response = raw_input("Press y to continue? : y \n")
+	#while (response != 'y'):
+        #    response = raw_input("Press y to continue? : y/n \n")
 
 	xsmu_driver  = xsmu.Driver()
 	xsmu_driver.open("XSMU012A")
 	
-	Amplitudes = [0.3, 3, 10]
+	Amplitudes = [0.05, 0.5, 5]
 	time_stamps = []
 	
 	for i in range(len(Amplitudes)):

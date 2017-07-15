@@ -19,24 +19,24 @@ f.close()
 # Loop over the measuring function
 # Print out the voltage values
 
-def set_DC_current (xsmu_driver, value):
+def set_DC_current (xsmu_driver, value, source_range):
 
     mode       = SOURCE_MODE_CS
     autorange  = AUTORANGE_ON
-    range      = VS_RANGE_10V
+    range      = source_range
 
     xsmu_driver.setSourceParameters (mode, autorange, range, value)
 
 def measure_voltage (xsmu_driver, xtcon_driver, iterations):
     
-    f = open("I-Data.txt", "a")
+    f = open("V-Data.txt", "a")
     for index in range(iterations):
         voltage     = xsmu_driver.VM_getReading( filterLength = 1 )
         temperature = xtcon_driver.getSampleTemperature()
         f.write(str(voltage) + "," + str(temperature) + '\n')
     f.close() 	
 
-def stabilize_temp (xtcon_driver, tolerance, monitoring_period)
+def stabilize_temp (xtcon_driver, tolerance, monitoring_period):
     
     history = []
     
@@ -58,9 +58,9 @@ def stabilize_temp (xtcon_driver, tolerance, monitoring_period)
 
 def main():
 	
-	xtcon_driver       = tcon.Driver      ()
-        xtcon_devices      = xtcon_driver.scan()
-	xtcon_driver                     .open(xtcon_devices[0])
+	xtcon_driver  = tcon.Driver      ()
+        xtcon_devices = xtcon_driver.scan()
+	xtcon_driver.open(xtcon_devices[0])
 	
 	setpoint           = float(raw_input ("Enter isothermal setpoint                                 (K) : "))
 	tolerance          = float(raw_input ("Tempereature Tolerance      (over 10 successive readings) (K) : "))
@@ -78,27 +78,29 @@ def main():
 	while (response != 'y'):
             response = raw_input("Press y to continue? : y/n \n")
 
-	xsmu_driver  = xsmu.Driver     ()
-	xsmu_devices = xsmu_driver.scan()
-	xsmu_driver               .open(xsmu_devices[0])
+	xsmu_driver  = xsmu.Driver()
+	xsmu_driver.open("XSMU012A")
 	
-	Amplitudes   = [0.005]
+	Amplitudes   = [0.005, 0.0005, 0.00005]
+	ranges       = [CM_RANGE_10mA, CM_RANGE_1mA, CM_RANGE_100uA]
 	time_stamps  = []
+	
+	iterations     = int(raw_input("Enter Number of iterations : "))
 	
 	for i in range(len(Amplitudes)):
             
             time_stamps.append(time.time())
             
-            DC_amplitude   = Amplitudes[i]    # V
-            iterations     = int(raw_input("Enter Number of iterations : "))
+            DC_amplitude   = Amplitudes[i]    # A
+            DC_range       = ranges[i]
 	
             print ("Setting DC Current.. \n")
 	
-            set_DC_current  (xsmu_driver, DC_amplitude)
+            set_DC_current  (xsmu_driver, DC_amplitude, DC_range)
             measure_voltage (xsmu_driver, xtcon_driver, iterations)
 	
 	xtcon_driver.stopIsothermalControl()
-	set_DC_current (xsmu_driver, 0.0)
+	set_DC_current (xsmu_driver, 0.0, ranges[0])
 	
         filename = open("TimeStamps.txt", "w")
         

@@ -65,7 +65,8 @@ def set_DC_voltage (deviceID, value):
         print 'Communication timeout in VS_setVoltage'
         exit (-2)
 
-    ############################    
+    ############################
+    time.sleep(1)
     
 
 def set_DC_current (deviceID, value):
@@ -73,7 +74,7 @@ def set_DC_current (deviceID, value):
     ############################
     # Set CS range
 
-    currentSourceRange = 0 # 0: 10uA, 1: 100uA, 2: 1mA, 3: 10mA, 4: 100mA
+    currentSourceRange = 3 # 0: 10uA, 1: 100uA, 2: 1mA, 3: 10mA, 4: 100mA
     timeout = 1.0
     
     if (np.abs(value) < 0.0001):
@@ -105,7 +106,7 @@ def set_DC_current (deviceID, value):
     current, timeout = libxsmu.CS_setCurrent (deviceID, current, timeout)
     
     print \
-            "Voltage: ", current, "\n" \
+            "Current: ", current, "\n" \
             "Timeout: ", timeout
 
     if (timeout == 0.0):
@@ -113,14 +114,15 @@ def set_DC_current (deviceID, value):
         exit (-2)
 
     ############################
+    time.sleep(1)
     
-def measureI (deviceID, filterLength):
+def set_CM_Range(deviceID, range):
     
     ############################
     # Set CM range
     
     timeout = 1.0
-    currentMeterRange = 3 # 0: 10uA, 1: 100uA, 2: 1mA, 3: 10mA, 4: 100mA
+    currentMeterRange = range # 0: 10uA, 1: 100uA, 2: 1mA, 3: 10mA, 4: 100mA
     
     currentMeterRange, timeout = \
             libxsmu.CM_setRange (deviceID, currentMeterRange, timeout)
@@ -131,7 +133,13 @@ def measureI (deviceID, filterLength):
 
     if (timeout == 0.0):
         print 'Communication timeout in CM_setRange.'
-        exit (-2)    
+        exit (-2)
+    
+def measureI (deviceID, filterLength):
+
+    ############################
+    # Set CM Range to 10mA
+    set_CM_Range(deviceID, 3)
     
     ############################
     # Get CM Current
@@ -139,6 +147,35 @@ def measureI (deviceID, filterLength):
     filter_length = filterLength
     timeout = 1 + 0.022 * filter_length
     
+    current, timeout = libxsmu.CM_getReading (deviceID, filter_length, timeout)
+    
+    print '**** Current : ' + str(current) + ' ****'
+    
+    if (timeout == 0.0):
+	print 'Communication timeout in CM_getReading.'
+	exit (-2)
+	
+    ############################
+    
+    if (np.abs(current) < 0.0001):
+        # Set CM Range to 100uA
+        set_CM_Range(deviceID, 1)
+        print 'Range : 100 uA'
+        
+    elif (np.abs(current) < 0.001):
+        # Set CM Range to 1mA
+        set_CM_Range(deviceID, 2)
+        print 'Range : 1 mA'
+    
+    elif (np.abs(current) < 0.01):
+        print 'Range : 10 mA'
+    
+    else :
+        print 'Out of Range'
+        
+    ############################
+    
+    timeout = 1 + 0.022 * filter_length
     current, timeout = libxsmu.CM_getReading (deviceID, filter_length, timeout)
     
     print \
@@ -152,16 +189,16 @@ def measureI (deviceID, filterLength):
     return current
 
 
-def measureV (deviceID, filterLength):
+def set_VM_Range(deviceID, range):
     
     ############################
     # Set VM range
     
     timeout = 1.0
-    voltageMeterRange = 4 # 0: 1mV, 1: 10mV, 2: 100mV, 3: 1V, 4: 10V, 5: 100V
+    voltageMeterRange = range # 0: 1mV, 1: 10mV, 2: 100mV, 3: 1V, 4: 10V, 5: 100V
     
     voltageMeterRange, timeout = \
-            libxsmu.VM_setRange (deviceID, voltageMeterRange, timeout)
+            libxsmu.VM2_setRange (deviceID, voltageMeterRange, timeout)
     print \
             "voltageMeterRange    :", voltageMeterRange, "\n" \
             "Remaining time        :", timeout, "sec", "\n"
@@ -169,17 +206,55 @@ def measureV (deviceID, filterLength):
     if (timeout == 0.0):
         print 'Communication timeout in VM_setRange.'
 	exit (-2)
-	
+
+
+def measureV (deviceID, filterLength):
+      
+    ############################
+    # Set VM Range to 10V
+    
+    set_VM_Range(deviceID, 4)
+
     ############################
     # Get VM Voltage
     
     filter_length = filterLength
     timeout = 1 + 0.03 * filter_length
     
-    #voltage, timeout = libxsmu.VM_getReading (deviceID, filter_length, timeout)
-    
     voltage, timeout = libxsmu.VM2_getReading (deviceID, filter_length, timeout)
     
+    print '**** Voltage : ' + str(voltage) + ' ****'
+    
+    if (timeout == 0.0):
+        print 'Communication timeout in VM_getReading.'
+	exit (-2)
+    
+    ############################
+    
+    if (np.abs(voltage) < 0.01):
+        ############################
+        # Set VM Range to 100mV
+        set_VM_Range(deviceID, 2)
+        print 'VM Range : 100 mV'
+    
+    elif (np.abs(voltage) < 1):
+        ############################
+        # Set VM Range to 1V
+        set_VM_Range(deviceID, 3)
+        print 'VM Range : 1 V'
+        
+    elif (np.abs(voltage < 10)):
+        print 'VM Range : 10 V'
+        
+    else :
+        print 'Out of Range'
+        
+    ############################
+    
+    timeout = 1 + 0.03 * filter_length
+    
+    voltage, timeout = libxsmu.VM2_getReading (deviceID, filter_length, timeout)
+
     print \
             "voltage               :", voltage, "\n" \
             "Remaining time        :", timeout, "sec", "\n"
