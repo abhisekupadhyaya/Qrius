@@ -125,6 +125,8 @@ def get_volt(SMU_deviceID, adc_value, adc_unit, measured_voltage):
 	corrected_adc_value = adc_value - 8388608
 	
 	HEADROOM = 1.02
+	left    = 0
+	right   = 4
 	
 	if(corrected_adc_value < adc_unit[left]):
 		right = left + 1;
@@ -179,9 +181,6 @@ def get_volt(SMU_deviceID, adc_value, adc_unit, measured_voltage):
 def measureV (SMU_deviceID,run_time):
 	##########################################################################
 	# Start recording streamed data from the XSMU
-	left    = 0
-	right   = 4
-
 	adc_unit        = []
 	measured_voltage = []
 
@@ -209,19 +208,21 @@ def measureV (SMU_deviceID,run_time):
 	logfile = open ('V-measure.txt', 'w')
 
 	t0 = time.time()
-	data_no = 0
+	_time_ = 0
 	while (time.time() - t0 < run_time):
 		time_now = time.time() - t0
 		print "Remaining time: ", 60 - (time.time() - t0) / 60.0, " minutes" 
 		timeout = 5.0
 		recSize, timeout = libxsmu.recSize (SMU_deviceID, timeout)
 		data = libxsmu.getData (SMU_deviceID)
+		print(data)
 		for adc_value in data:
-			real_volt = get_volt(SMU_deviceID, adc_value, adc_unit, measured_voltage)
-			logfile.write (str (_time_) + ", " + str (real_volt)  + '\n')
-			print _time_ ',\t', time_now, ',\t', real_volt* 1e9,  ' ADC'
-			logfile.flush()
 			_time_ = _time_ + 1
+			real_volt = get_volt(SMU_deviceID, adc_value, adc_unit, measured_voltage)
+			logfile.write (str (_time_)+ ", " + str (time_now) + ", " + str (real_volt)  + '\n')
+			print _time_, ',\t', time_now, ',\t', real_volt* 1e9,  ' ADC'
+			logfile.flush()
+			
 		time.sleep (10)
 
 	timeout = 5
@@ -235,12 +236,13 @@ def measureT (TCon_deviceID, sensorID, run_time):
 	data_no = 0
 	while (time.time() - t0 < run_time):
 		time_now = time.time() - t0
-		sensor, T, timeout = libxtcon.getSensorTemperature (deviceID, sensorID, timeout)
+		timeout = 1.0
+		sensor, T, timeout = libxtcon.getSensorTemperature (TCon_deviceID, sensorID, timeout)
 		logfile.write (str (time_now) + ", " + str (T)  + '\n')
 		print T, ',\t'
 		logfile.flush()
 
-		time.sleep (10)
+		time.sleep (5)
 
 
 def isothermal_start (TCon_deviceID, setpoint):
@@ -362,13 +364,14 @@ def main():
 
     if __name__=='__main__':
     	temperature_measure = Process(target = measureT, args = (TCon_deviceID, sensorID, run_time))
-		stream_data         = Process(target = measureV, args = (SMU_deviceID, run_time))
-			
-		temperature_measure.start()
-		stream_data.start()
+    	#stream_data         = Process(target = measureV, args = (SMU_deviceID, run_time))
 
-		temperature_measure.join()
-		stream_data.join()
+    	temperature_measure.start()
+    	#stream_data.start()
+    	measureV(SMU_deviceID, run_time)
+
+    	temperature_measure.join()
+    	#stream_data.join()
 
 
     set_DC_voltage (SMU_deviceID, voltage)
