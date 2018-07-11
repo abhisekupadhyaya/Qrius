@@ -31,6 +31,25 @@ def set_VM_range (SMU_deviceID):
 
 		print
 
+def set_CM_Range(deviceID):
+    
+    ############################
+    # Set CM range
+    
+    timeout = 1.0
+    currentMeterRange = 1# 0: 10uA, 1: 100uA, 2: 1mA, 3: 10mA, 4: 100mA
+    
+    currentMeterRange, timeout = \
+            libxsmu.CM_setRange (deviceID, currentMeterRange, timeout)
+    
+    print \
+            "currentMeterRange    :", currentMeterRange, "\n" \
+            "Remaining time        :", timeout, "sec", "\n"
+
+    if (timeout == 0.0):
+        print 'Communication timeout in CM_setRange.'
+        exit (-2)
+
 
 def set_DC_voltage (SMU_deviceID, value):
     
@@ -120,6 +139,7 @@ def set_DC_current (SMU_deviceID, value):
 def measureV (SMU_deviceID,run_time, filename):
 	##########################################################################
 	# Start recording streamed data from the XSMU
+	set_VM_range (SMU_deviceID)
 	
 	print \
 		"Getting Data"
@@ -150,6 +170,7 @@ def measureV (SMU_deviceID,run_time, filename):
 def measureI (SMU_deviceID,run_time, filename):
 	##########################################################################
 	# Start recording streamed data from the XSMU
+	set_CM_Range(SMU_deviceID)
 	
 	print \
 		"Getting Data"
