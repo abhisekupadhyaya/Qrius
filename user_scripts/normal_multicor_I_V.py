@@ -5,16 +5,9 @@ import csv
 import numpy as np
 from multiprocessing import Process
 
-logfile = open ('V-measure.txt', 'w')
-logfile.close()
-
-logfile = open ('T-measure.txt', 'w')
-logfile.close()
-
-
 def set_VM_range (SMU_deviceID):
 	timeout = 15.0
-	voltageMeterRange = 3 # 0: 1mV, 1: 10mV, 2: 100mV, 3: 1V, 4: 10V, 5: 100V
+	voltageMeterRange = 4 # 0: 1mV, 1: 10mV, 2: 100mV, 3: 1V, 4: 10V, 5: 100V
 	voltageMeterRange, timeout = \
 	libxsmu.VM_setRange (SMU_deviceID, voltageMeterRange, timeout)
 	print \
@@ -123,183 +116,144 @@ def set_DC_current (SMU_deviceID, value):
     ############################
     time.sleep(1)
 
-def get_volt(SMU_deviceID, adc_value, adc_unit, measured_voltage):
-	
-	corrected_adc_value = adc_value - 8388608
-	
-	HEADROOM = 1.02
-	left    = 0
-	right   = 4
-	
-	if(corrected_adc_value < adc_unit[left]):
-		right = left + 1;
 
-		slope = (measured_voltage[right] - measured_voltage[left])/ \
-				(adc_unit[right] - adc_unit[left])
-
-		rv = measured_voltage[left] + (slope*(corrected_adc_value-adc_unit[left]))
-
-		if(rv < HEADROOM*measured_voltage[left]):
-			return HEADROOM*measured_voltage[left]
-		else:
-			return rv
-
-	elif(corrected_adc_value > adc_unit[right]):
-		left = right-1
-		
-		slope = (measured_voltage[right] - measured_voltage[left])/ \
-				(adc_unit[right] - adc_unit[left])
-
-		rv = measured_voltage[left] + (slope*(corrected_adc_value-adc_unit[left]))
-
-		if(rv > HEADROOM*measured_voltage[right]):
-			return HEADROOM*measured_voltage[right]
-		else:
-			return rv
-			
-	else:
-		while True:
-			middle = int((left + right) / 2)
-
-			if(corrected_adc_value < adc_unit[middle]):
-				right = middle
-
-			elif(corrected_adc_value > adc_unit[middle]):
-				left = middle
-
-			else:
-				return measured_voltage[middle]
-
-			if((right-left) <= 1):
-				break
-
-		slope = (measured_voltage[right] - measured_voltage[left])/ \
-				(adc_unit[right] - adc_unit[left])
-
-		rv = measured_voltage[left] + (slope*(corrected_adc_value-adc_unit[left]))
-
-		return rv
-
-
-def measureV (SMU_deviceID,run_time):
+def measureV (SMU_deviceID,run_time, filename):
 	##########################################################################
 	# Start recording streamed data from the XSMU
-	adc_unit        = []
-	measured_voltage = []
-
-	for index in range(0,5):
-		timeout = 1.0
-		i, adc, voltage, timeout = \
-			libxsmu.VM_getCalibration (SMU_deviceID, index, timeout)
-		
-		adc_unit.append(adc)
-		measured_voltage.append(voltage)
 	
-	timeout = 5
-
-	timeout = libxsmu.StartRec (SMU_deviceID, timeout)
-	print \
-	      "Started Recording Streamed Data"
-
-	time.sleep (5)
-
-	##########################################################################
-	# Get streamed data from data queue
 	print \
 		"Getting Data"
 
-	logfile = open ('V-measure.txt', 'w')
+	logfile = open (filename, 'w')
 
 	t0 = time.time()
 	_time_ = 0
-	while (time.time() - t0 < run_time):
-		time_now = time.time() - t0
-		print "Remaining time: ", 60 - (time.time() - t0) / 60.0, " minutes" 
-		timeout = 5.0
-		recSize, timeout = libxsmu.recSize (SMU_deviceID, timeout)
-		data = libxsmu.getData (SMU_deviceID)
-		print(data)
-		for adc_value in data:
-			_time_ = _time_ + 1
-			real_volt = get_volt(SMU_deviceID, adc_value, adc_unit, measured_voltage)
-			logfile.write (str (_time_)+ ", " + str (time_now) + ", " + str (real_volt)  + '\n')
-			print _time_, ',\t', time_now, ',\t', real_volt* 1e9,  ' ADC'
-			logfile.flush()
-			
-		time.sleep (5)
+	time_now = time.time() - t0
+	while (time_now < run_time):
+		print "Remaining time: ", (run_time - (time_now)) / 60.0, " minutes"
 
-	logfile.close()
-	timeout = 5
-	timeout = libxsmu.StopRec (SMU_deviceID, timeout)
-	print \
-		"Stopped Recording Streamed Data"
-
-def measureT (TCon_deviceID, sensorID, run_time):
-	logfile = open ('T-measure.txt', 'w')
-	t0 = time.time()
-	data_no = 0
-	while (time.time() - t0 < run_time):
-		timeout = 1.0
-		sensor, T, timeout = libxtcon.getSensorTemperature (TCon_deviceID, sensorID, timeout)
+		filter_length = 1
+		timeout = 1 + 0.03 * filter_length
+		voltage, timeout    = libxsmu.VM_getReading (SMU_deviceID, filter_length, timeout)
 		time_now = time.time() - t0
-		logfile.write (str (time_now) + ", " + str (T)  + '\n')
-		print T, ',\t'
+		_time_ = _time_ + 1
+
+		logfile.write (str (_time_)+ ", " + str (time_now) + ", " + str (voltage)  + '\n')
+		print _time_, ',\t', time_now, ',\t', voltage,  ' ADC'
+
 		logfile.flush()
 
-		time.sleep (5)
+	logfile.close()
+	print \
+		"Stopped Recording Data"
+
+def measureI (SMU_deviceID,run_time, filename):
+	##########################################################################
+	# Start recording streamed data from the XSMU
+	
+	print \
+		"Getting Data"
+
+	logfile = open (filename, 'w')
+
+	t0 = time.time()
+	_time_ = 0
+	time_now = time.time() - t0
+	while (time_now < run_time):
+		print "Remaining time: ", (run_time - (time_now)) / 60.0, " minutes"
+
+		filter_length = 1
+		timeout = 1 + 0.03 * filter_length
+		current, timeout    = libxsmu.CM_getReading (SMU_deviceID, filter_length, timeout)
+		time_now = time.time() - t0
+		_time_ = _time_ + 1
+
+		logfile.write (str (_time_)+ ", " + str (time_now) + ", " + str (current)  + '\n')
+		print _time_, ',\t', time_now, ',\t', current,  ' ADC'
+
+		logfile.flush()
 
 	logfile.close()
+	print \
+		"Stopped Recording Data"
 
+def measureT (TCon_deviceID, sensorID, run_time, filename):
+    logfile = open (filename, 'w')
+    t0 = time.time()
+    data_no = 0
+    while (time.time() - t0 < run_time):
+        timeout = 1.0
+        sensor, T, timeout = libxtcon.getSensorTemperature (TCon_deviceID, sensorID, timeout)
+        time_now = time.time() - t0
+        logfile.write (str (time_now) + ", " + str (T)  + '\n')
+        print T, ',\t'
+        logfile.flush()
+
+        time.sleep (5)
+
+    logfile.close()
 
 def isothermal_start (TCon_deviceID, setpoint):
-	runMode = 1 # 0:IDLE, 1:ISOTHERMAL, 2:LINEAR RAMP
-	timeout = 1.0
-	libxtcon.setIsothermal(TCon_deviceID, setpoint, timeout)
-	print ("Isothermal is set on : ", str (setpoint)+ '\n')
+    runMode = 1 # 0:IDLE, 1:ISOTHERMAL, 2:LINEAR RAMP
+    timeout = 1.0
+    libxtcon.setIsothermal(TCon_deviceID, setpoint, timeout)
+    print ("Isothermal is set on : ", str (setpoint)+ '\n')
 
-	timeout = 1.0
-	libxtcon.startRun(TCon_deviceID, runMode, timeout)
-	print ("Starting Isothermal Run.. \n")
+    timeout = 1.0
+    libxtcon.startRun(TCon_deviceID, runMode, timeout)
+    print ("Starting Isothermal Run.. \n")
 
 
-def isothermal_stop (TCon_deviceID, setpoint):
-	timeout = 1.0
-	libxtcon.stopRun(TCon_deviceID, timeout)
-	raw_input ("Isothermal Finished. Press Enter to Exit\n")
+def isothermal_stop (TCon_deviceID):
+    timeout = 1.0
+    libxtcon.stopRun(TCon_deviceID, timeout)
+    raw_input ("Isothermal Finished. Press Enter to Exit\n")
 
 
 def stabilize_temp (deviceID, sensorID, tolerance, monitoring_period):
     
-	history = []
+    history = []
     
-	print ("Stabilizing .. \n")
+    print ("Stabilizing .. \n")
     
-	while True :
-		timeout = 5.0
-		sensor, T, timeout = libxtcon.getSensorTemperature (deviceID, sensorID, timeout)
-		history.append(T)
+    while True :
+        timeout = 5.0
+        sensor, T, timeout = libxtcon.getSensorTemperature (deviceID, sensorID, timeout)
+        history.append(T)
 
-		if (len(history)<monitoring_period):
-			continue
-		else :
-			fluctuation = max(history[-monitoring_period:-1]) - min(history[-monitoring_period:-1])
-			print "Max : " + str (max(history[-monitoring_period:-1])) + "\tMin : " + str(min(history[-monitoring_period:-1]))
+        if (len(history)<monitoring_period):
+            continue
+        else :
+            fluctuation = max(history[-monitoring_period:-1]) - min(history[-monitoring_period:-1])
+            print "Max : " + str (max(history[-monitoring_period:-1])) + "\tMin : " + str(min(history[-monitoring_period:-1]))
 
-			if (np.abs(fluctuation) < tolerance):
-				print ("Fluctuation : " + str(fluctuation))
-				print ("Stable ..\n")
-				break
+            if (np.abs(fluctuation) < tolerance):
+                print ("Fluctuation : " + str(fluctuation))
+                print ("Stable ..\n")
+                break
 
-    
 def main():
 	##########################################################################
     # User input parameters
-    run_time          = int  (raw_input ("Enter Time For This Run (sec)     : "))
-    setpoint          = float(raw_input ("Enter Setpoint (K)                : "))
+    start_temp        = float(raw_input ("Enter starting setpoint (K)       : "))
+    #ending_temp       = float(raw_input ("Enter ending setpoint (K)         : "))
+    #step_size         = float(raw_input ("Enter step_size (K)               : "))    
     tolerance         = float(raw_input ("Tempereature Tolerance  (K)       : "))
     monitoring_period = int  (raw_input ("Enter the monitoring period (int) : "))
+    run_time          = int  (raw_input ("Enter Time For This Run (sec)     : "))
 
-    ##########################################################################
+    setpoints = []
+    setpoints.append(start_temp)
+
+
+    response = raw_input("Press y to add more setpoint? : y \n")
+    while (response == 'y'):
+    	next_setpoint = float(raw_input ("Enter next setpoint (K)       : "))
+    	setpoints.append(next_setpoint)
+        response = raw_input("Press y to add more setpoint? : y/n \n")
+
+
+     ##########################################################################
     # Scans USB bus for Xplore SMU.
 
     N = libxsmu.scan()
@@ -358,29 +312,40 @@ def main():
         exit (-2)
 
     sensorID =  1# 0:RTD1, 1:RTD2(Sample Temperature), 2:TC1
-    isothermal_start (TCon_deviceID, setpoint)
-    stabilize_temp (TCon_deviceID, sensorID, tolerance, monitoring_period)
     ##########################################################################
+    voltage_initial = 5.0
     voltage        = 0.0
-    current        = 0.01
-    filterLength = 1
-
+    current        = 0.002
     set_VM_range (SMU_deviceID)
-    set_DC_current (SMU_deviceID, current)
+    #set_DC_current(SMU_deviceID, current)
+    set_DC_voltage (SMU_deviceID, voltage_initial)
 
-    if __name__=='__main__':
-    	temperature_measure = Process(target = measureT, args = (TCon_deviceID, sensorID, run_time))
-    	#stream_data         = Process(target = measureV, args = (SMU_deviceID, run_time))
+    for setpoint in setpoints:
+    	#response = raw_input("Press y to continue? : y \n")
+    	#while (response != 'y'):
+    		#response = raw_input("Press y to continue?: y \n")
 
-    	temperature_measure.start()
-    	#stream_data.start()
-    	measureV(SMU_deviceID, run_time)
+        isothermal_start (TCon_deviceID, setpoint)
+        stabilize_temp (TCon_deviceID, sensorID, tolerance, monitoring_period)
 
-    	temperature_measure.join()
-    	#stream_data.join()
+        ##########################################################################
+        voltage_filename = "V_" + str(setpoint) + ".csv"
+        temperature_filename = "T_" + str(setpoint) + ".csv"
+        current_filename = "I_" + str(setpoint) + ".csv"
 
+        if __name__=='__main__':
+            #I_V_data            = Process(target = measureV, args = (SMU_deviceID, run_time, voltage_filename))
+            temperature_measure = Process(target = measureT, args = (TCon_deviceID, sensorID, run_time, temperature_filename))
+
+            #I_V_data.start()
+            temperature_measure.start()
+            measureI(SMU_deviceID, run_time, current_filename)
+
+            #I_V_data.join()
+            temperature_measure.join()
 
     set_DC_voltage (SMU_deviceID, voltage)
+
     raw_input ("Run Finished. Press Enter to Exit\n")
 
     ##########################################################################
